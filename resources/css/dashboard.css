@@ -1,0 +1,68 @@
+/* Custom Dashboard Styles */
+.dashboard-card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-200 p-6 transition-all duration-300 hover:shadow-xl hover:scale-105;
+}
+
+.region-button {
+    @apply px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center transform hover:scale-105;
+}
+
+.region-button.active {
+    @apply text-white shadow-lg;
+}
+
+.region-button.inactive {
+    @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+}
+
+.stats-card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-200 p-6 transition-all duration-300 hover:shadow-xl hover:scale-105;
+}
+
+.stats-card.blue {
+    @apply bg-gradient-to-br from-blue-500 to-blue-600 text-white;
+}
+
+.stats-card.green {
+    @apply bg-gradient-to-br from-green-500 to-green-600 text-white;
+}
+
+.stats-card.orange {
+    @apply bg-gradient-to-br from-orange-500 to-orange-600 text-white;
+}
+
+.stats-card.red {
+    @apply bg-gradient-to-br from-red-500 to-red-600 text-white;
+}
+
+/* Animation for region buttons */
+.region-button:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* Stats card hover effects */
+.stats-card:hover {
+    transform: translateY(-4px) scale(1.02);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+
+
