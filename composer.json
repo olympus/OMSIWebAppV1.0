@@ -9,7 +9,7 @@
         "php": "^8.2",
         "aws/aws-sdk-php": "^3.359",
         "bezhansalleh/filament-shield": "^4.0",
-        "filament/filament": "^4.0",
+        "filament/filament": "4.3.1",
         "google/apiclient": "2.15",
         "guzzlehttp/promises": "^2.3",
         "jenssegers/agent": "^2.6",

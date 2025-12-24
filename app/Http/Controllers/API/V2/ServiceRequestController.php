@@ -1528,7 +1528,7 @@ Update now!."
         }
     }
 
-    public function get_requests_history(Request $request)
+    /*public function get_requests_history_old_24dec(Request $request)
     {
 
         $rules = [
@@ -1886,6 +1886,159 @@ Update now!."
                 ]);
             }
         }
+    }*/
+
+    public function get_requests_history(Request $request)
+    {
+        $rules = [
+            'customer_id' => 'required|exists:customers,id',
+            'request_type' => 'regex:/^[a-zA-Z\s]*$/'
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first(),
+                'status_code' => 203
+            ]);
+        }
+
+        $user = auth('customer-api')->user();
+
+        if (!$user) {
+            return response()->json([
+                'status_code' => 400,
+                'message' => 'user not found'
+            ]);
+        }
+        if($user->id != $request->customer_id){
+            return response()->json([
+                'status_code' => 400,
+                'message' => 'user not found'
+            ]);
+        }
+
+        if ($user->is_expired != 0) {
+            return response()->json([
+                'status_code' => 407,
+                'message' => 'password expired',
+                'is_expired' => $user->is_expired
+            ]);
+        }
+
+        $history = (object)[];
+
+        /* ===================== ONGOING REQUESTS ===================== */
+
+        $ongoingServiceAry = ServiceRequests::where('customer_id', $request->customer_id)
+            ->where('status', '!=', 'Closed')->latest()->get();
+
+        $ongoingArchiveServiceAry = ArchiveServiceRequests::where('customer_id', $request->customer_id)
+            ->where('status', '!=', 'Closed')->latest()->get();
+
+        $history->ongoingAry = $ongoingServiceAry->merge($ongoingArchiveServiceAry);
+
+        foreach ($history->ongoingAry as $value) {
+
+            $value->hospital_name = Hospitals::where('id', $value->hospital_id)->value('hospital_name');
+            $value->dept_name = Departments::where('dept_id', $value->dept_id)->value('name');
+
+            /* ---------- Escalation Count ---------- */
+            $esc_count = ServiceRequests::where('id', $value->id)->value('escalation_count')
+                ?? ArchiveServiceRequests::where('id', $value->id)->value('escalation_count')
+                ?? 0;
+
+            $esc_count = min($esc_count, 4);
+            $value->escalation_detail = [];
+
+            /* ---------- Escalation Details ---------- */
+            if (!empty($value->employee_code) && $esc_count > 0) {
+
+                $emp_data = EmployeeTeam::where('employee_code', $value->employee_code)->first();
+
+                if ($emp_data) {
+                    for ($i = 1; $i <= $esc_count; $i++) {
+
+                        $mailColumn = 'escalation_' . $i;
+
+                        if (!empty($emp_data->$mailColumn)) {
+
+                            $esc = EmployeeTeam::where('email', $emp_data->$mailColumn)
+                                ->select('name', 'email', 'mobile', 'image', 'designation')
+                                ->first();
+
+                            if ($esc) {
+                                $esc->employee_image = config('app.url') . "/storage/" . $esc->image;
+                                $esc->escalation_level = $i;
+                                $value->escalation_detail[] = $esc;
+                            }
+                        }
+                    }
+                }
+            }
+
+            /* ---------- FSE ---------- */
+            if (!empty($value->employee_code)) {
+                $value->fseAry = EmployeeTeam::where('employee_code', $value->employee_code)->get();
+
+                if ($value->fseAry->isNotEmpty() && !empty($value->fseAry[0]->image)) {
+                    $value->fseAry[0]->employee_image =
+                        config('app.url') . "/storage/" . $value->fseAry[0]->image;
+                }
+            } else {
+                $value->fseAry = [];
+            }
+
+            /* ---------- Service Extra Data ---------- */
+            if ($value->request_type === 'service') {
+                $value->product_info = ProductInfo::where('service_requests_id', $value->id)->get();
+                $value->technical_report = TechnicalReport::where('service_requests_id', $value->id)->get();
+            }
+
+            /* ---------- Timeline ---------- */
+            $request_history = StatusTimeline::where('customer_id', $value->customer_id)
+                ->where('request_id', $value->id)->get();
+
+            $reminder_history = RequestReminderHistory::where('customer_id', $value->customer_id)
+                ->where('request_id', $value->id)
+                ->select('id', 'customer_id', 'request_id', 'status', 'created_at', 'updated_at')
+                ->get();
+
+            $value->timelineAry = collect(array_merge(
+                $request_history->toArray(),
+                $reminder_history->toArray()
+            ))->sortBy('created_at')->values();
+
+            $value->request_progress = request_progress($value->request_type, $value->status);
+        }
+
+        /* ===================== CLOSED REQUESTS ===================== */
+
+        $serviceClosedAry = ServiceRequests::where('customer_id', $request->customer_id)
+            ->where('status', 'Closed')->latest()->get();
+
+        $archiveServiceClosedAry = ArchiveServiceRequests::where('customer_id', $request->customer_id)
+            ->where('status', 'Closed')->latest()->get();
+
+        $history->closedAry = $serviceClosedAry->merge($archiveServiceClosedAry);
+
+        foreach ($history->closedAry as $value) {
+
+            $value->hospital_name = Hospitals::where('id', $value->hospital_id)->value('hospital_name');
+            $value->dept_name = Departments::where('dept_id', $value->dept_id)->value('name');
+
+            $value->feedback = $value->feedback_id
+                ? Feedback::where('request_id', $value->id)->get()
+                : [];
+
+            $value->request_progress = request_progress($value->request_type, $value->status);
+        }
+
+        return response()->json([
+            'status_code' => 200,
+            'history' => $history
+        ]);
     }
 
     public function findNextWorkingDay(){

@@ -483,7 +483,7 @@ class RequestsController extends Controller
             $servicerequest->save();
             //send_sms('request_type_changed', $customer, $servicerequest, $oldData->request_type);
             NotifyCustomer::send_notification('request_type_changed', $servicerequest, $customer);
-            return redirect($request->previous_url)->with('message', 'Request Type successfully changed.');
+            // return redirect($request->previous_url)->with('message', 'Request Type successfully changed.');
         }
         $servicerequest->customer_id = $request->customer_id;
         $servicerequest->hospital_id = $request->hospital_id;
@@ -506,7 +506,7 @@ class RequestsController extends Controller
         NotifyCustomer::send_notification('request_update', $servicerequest, $customer);
         event(new RequestStatusUpdated($servicerequest, $customer, $oldData));
 
-        return redirect($request->previous_url)->with('message', 'Request data successfully updated');
+        // return redirect($request->previous_url)->with('message', 'Request data successfully updated');
     }
 
     public function show($id)

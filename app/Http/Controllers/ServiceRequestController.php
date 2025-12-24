@@ -1518,8 +1518,8 @@ So please install the latest version to enjoy the best experience."
             //$cc_final = 'ritik.bansal@lyxelandflamingo.com';
             //$pathToImage = json_decode(file_get_contents(env('APP_URL').'/capture_screenshot/'.$servicerequest->id.'/feedback'));
             try{
-                Mail::to($users_final)->cc($cc_final)
-                    ->send(new FeedbackCreated($servicerequest->id, $servicerequest, $customer));
+                // Mail::to($users_final)->cc($cc_final)
+                //     ->send(new FeedbackCreated($servicerequest->id, $servicerequest, $customer));
                 // Mail::to($final_to_list)->cc($final_cc_list)
                 // ->send(new RequestEscalated($pathToImage, $servicerequest, $customer));
             }catch (Exception $e) {

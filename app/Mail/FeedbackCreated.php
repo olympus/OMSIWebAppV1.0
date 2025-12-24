@@ -37,17 +37,43 @@ class FeedbackCreated extends Mailable
      *
      * @return $this
      */
+    // public function build()
+    // {
+    //     file_get_contents(asset('/exports/'.$this->servicerequest->id));
+    //     return $this
+    //     ->bcc(\Config('oly.developer_email'))
+    //     //->view('emails.img_return')
+    //     ->view('emails.feedback_recvd_new', ['id'=> $this->request_id])
+    //     ->subject('Olympus My Voice | '.ucfirst($this->servicerequest->request_type).' | '.$this->servicerequest->cvm_id.' | *Feedback Received*')
+    //     ->attach(storage_path().'/exports/ServiceRequests-'.$this->servicerequest->id.'.xls', [
+    //         'as' => 'ServiceRequest-'.$this->servicerequest->id.'.xls',
+    //         'mime' => 'application/vnd.ms-excel',
+    //     ]);
+    // }
+
     public function build()
     {
-        file_get_contents(asset('/exports/'.$this->servicerequest->id));
+        $fileName = 'ServiceRequests-' . (int)$this->servicerequest->id . '.xls';
+        $filePath = storage_path('exports/' . $fileName);
+
+        if (!file_exists($filePath)) {
+            throw new \Exception('Attachment file not found');
+        }
+
         return $this
-        ->bcc(\Config('oly.developer_email'))
-        //->view('emails.img_return')
-        ->view('emails.feedback_recvd_new', ['id'=> $this->request_id])
-        ->subject('Olympus My Voice | '.ucfirst($this->servicerequest->request_type).' | '.$this->servicerequest->cvm_id.' | *Feedback Received*')
-        ->attach(storage_path().'/exports/ServiceRequests-'.$this->servicerequest->id.'.xls', [
-            'as' => 'ServiceRequest-'.$this->servicerequest->id.'.xls',
-            'mime' => 'application/vnd.ms-excel',
-        ]);
+            ->bcc(config('oly.developer_email'))
+            ->view('emails.feedback_recvd_new', [
+                'id' => $this->request_id
+            ])
+            ->subject(
+                'Olympus My Voice | ' .
+                ucfirst($this->servicerequest->request_type) .
+                ' | ' . $this->servicerequest->cvm_id .
+                ' | *Feedback Received*'
+            )
+            ->attach($filePath, [
+                'as'   => 'ServiceRequest-' . $this->servicerequest->id . '.xls',
+                'mime' => 'application/vnd.ms-excel',
+            ]);
     }
 }

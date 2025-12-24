@@ -362,6 +362,25 @@ class CustomersApiController extends Controller
         return $customer;
     }
 
+    public function customerList(Request $request)
+    {
+        $user = auth('customer-api')->user();
+        if (count((array)$user) > 0) {
+            if($user->id){
+                $customer = Customers::findOrFail($user->id);
+                $respArr['status_code'] = 200;
+                $respArr['message'] = 'User Found.';
+                $respArr['data'] = $customer;
+                return response(json_encode($respArr), 200)->header('Content-Type', 'text/plain');
+             }else{
+                $respArr['status_code'] = 404;
+                $respArr['message'] = 'User Not Found.';
+                $respArr['data'] = Null;
+                return response(json_encode($respArr), 404)->header('Content-Type', 'text/plain');
+            }
+        }
+    } 
+
     /**
      * Update the specified customer
      *
@@ -1653,7 +1672,7 @@ You have '.$left_attempt.' attempts remaining';
                     send_sms('request_created', $customer_otp_send, "", "");
 
 
-                    return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => $customer->otp_code]);
+                    return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => null]);
                 }else{
                     return response()->json([
                         'status_code' => 407,
@@ -1703,7 +1722,8 @@ You have '.$left_attempt.' attempts remaining';
                         Mail::to($customer_otp_send->email)
                         ->send(new SendResendOtp($customer_otp_send));
                         send_sms('request_created', $customer_otp_send, "", "");
-                        return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => $customer->otp_code ]);
+                        //return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => $customer->otp_code ]);
+                        return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => null]);
                     } else {
                         return Response::json(['status_code'=>403,'message'=>'Incorrect Mobile Number !']);
                     }
@@ -1749,7 +1769,9 @@ You have '.$left_attempt.' attempts remaining';
                 send_sms('request_created', $customer_otp_send, "", "");
 
 
-                return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => $customer_otp_send->otp_code ]);
+                //return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => $customer_otp_send->otp_code ]);
+                return Response::json(['status_code'=>200,'message'=>'OTP Sent !']);
+
             } else {
                 return Response::json(['status_code'=>403,'message'=>'Incorrect Mobile Number !']);
             }

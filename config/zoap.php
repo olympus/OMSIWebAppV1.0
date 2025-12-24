@@ -103,7 +103,7 @@ return [
 
     'mock'          => [
         'user'              => 'test@test.com',
-        'password'          => 'tester',
+        //'password'          => 'tester',
         'token'             => 'tGSGYv8al1Ce6Rui8oa4Kjo8ADhYvR9x8KFZOeEGWgU1iscF7N2tUnI3t9bX'
     ],
 

@@ -121,3 +121,7 @@ Route::prefix('v2')->middleware(['jwt.verify'])->group(function () {
 
 Route::post('send-notification', [TestingController::class, 'sendNotification2']);
 Route::get('sfdc-data-update-api', [SFDCDataUpdateAPIController::class, 'sfdcDataUpdateAPI']);
+
+Route::prefix('/v2')->middleware(['apiauth','jwt.verify'])->namespace('API\V2')->group(function (){
+    Route::post('customer-list', 'CustomersApiController@customerList');
+});

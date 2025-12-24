@@ -29,6 +29,12 @@ class Customers extends Model implements JWTSubject
         }
     }
 
+    protected $hidden = [
+        'password',
+        //'remember_token',
+        //'otp',
+    ];
+
     public function videos()
     {
         return $this->hasMany(Video::class);

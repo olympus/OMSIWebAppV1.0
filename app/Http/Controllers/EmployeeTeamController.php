@@ -328,7 +328,7 @@ class EmployeeTeamController extends Controller
 
         if(!is_null($request->file('image'))){
             $files = glob(storage_path('app/public/employeeimages/'.$employeeteam->employee_code.'.*'));
-            foreach ($files as $file) { unlink($file); }
+            /*foreach ($files as $file) { unlink($file); }*/
 
             $frontimage = $request->file('image');
             $fimage_fileName = $employeeteam->employee_code.'.'.$frontimage->getClientOriginalExtension();
