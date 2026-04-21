@@ -8,9 +8,43 @@ use Illuminate\Database\Eloquent\Model;
 
 class Video extends Model
 {
-    protected $appends = ['created_at_readable'];
+    protected $appends = ['created_at_readable', 'full_thumbnail_image_url', 'full_video_url'];
     protected $withCount = ['customers'];
     protected $guarded = [];
+ 
+
+    /**
+     * Accessor for full thumbnail image url
+     */
+    public function getFullThumbnailImageUrlAttribute()
+    {
+        $filePath = config('image_path.file_path') ?? url('/');
+
+        if (!empty($this->videos_thumbnail_image)) {
+            return $filePath . 'storage/' . ltrim($this->videos_thumbnail_image, '/');
+        }
+
+        return null;
+    }
+
+    /**
+     * Accessor for full video url
+     */
+    public function getFullVideoUrlAttribute()
+    {
+        $filePath = config('image_path.file_path') ?? url('/');
+
+        if (!empty($this->video_file)) {
+            return $filePath . 'storage/' . ltrim($this->video_file, '/');
+        }
+
+        if (!empty($this->url)) {
+            return $this->url;
+        }
+
+        return null;
+    }
+
     // protected static function boot()
     // {
     //     parent::boot();

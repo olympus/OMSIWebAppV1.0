@@ -26,11 +26,14 @@ class MergedServiceRequestResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'request_type';
+    
+    protected static string | UnitEnum | null $navigationGroup = 'Requests';
+
     protected static ?int $navigationSort = 1;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Requests';
-    protected static ?int $navigationGroupSort = 1;
-
+    //protected static ?int $navigationGroupSort = 1;
+    
+    protected static ?string $navigationLabel = 'All Requests';
 
 
     public static function form(Schema $schema): Schema

@@ -8,4 +8,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateVideo extends CreateRecord
 {
     protected static string $resource = VideoResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        return VideoResource::normalizeOtherVideoFields($data);
+    }
 }

@@ -110,11 +110,36 @@ class MergedServiceRequestsTable
                 ViewAction::make(),
 
                 EditAction::make()
-                    ->url(fn ($record) =>
-                    $record->source === 'active'
-                        ? route('filament.admin.resources.service-requests.edit', ['record' => $record->id])
-                        : route('filament.admin.resources.archive-service-requests.edit', ['record' => $record->id])
-                    ),
+                    ->url(fn ($record) => match ($record->request_type) {
+
+                        'service' => route(
+                            'filament.admin.resources.service-request-data.edit',
+                            ['record' => $record->id]
+                        ),
+
+                        'enquiry' => route(
+                            'filament.admin.resources.enquiry-request-data.edit',
+                            ['record' => $record->id]
+                        ),
+
+                        'academic' => route(
+                            'filament.admin.resources.academic-request-data.edit',
+                            ['record' => $record->id]
+                        ),
+
+                        default => route(
+                            'filament.admin.resources.service-request-data.edit',
+                            ['record' => $record->id]
+                        ),
+
+                    }),
+                    
+                // EditAction::make()
+                //     ->url(fn ($record) =>
+                //     $record->source === 'active'
+                //         ? route('filament.admin.resources.service-requests.edit', ['record' => $record->id])
+                //         : route('filament.admin.resources.archive-service-requests.edit', ['record' => $record->id])
+                //     ),
 
 //                    ->openUrlInNewTab(),
 

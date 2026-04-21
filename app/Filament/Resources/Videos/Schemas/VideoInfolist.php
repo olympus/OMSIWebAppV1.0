@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Filament\Resources\Videos\Schemas;
-
-use Filament\Infolists\Components\IconEntry;
+ 
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Support\Icons\Heroicon;
+use App\Models\User;
 use Filament\Schemas\Schema;
-
 class VideoInfolist
 {
     public static function configure(Schema $schema): Schema
@@ -13,10 +15,14 @@ class VideoInfolist
         return $schema->components(function ($record) {
             $components = [
                 TextEntry::make('title')->label('Title'),
+                ImageEntry::make('videos_thumbnail_image')
+                    ->label('Image')
+                    ->placeholder('-'),
+
                 TextEntry::make('url')->label('Video URL'),
                 TextEntry::make('description')->label('Description')->columnSpanFull(),
-                TextEntry::make('nt_title')->label('Notification Title'),
-                TextEntry::make('nt_description')->label('Notification Description'),
+                // TextEntry::make('nt_title')->label('Notification Title'),
+                // TextEntry::make('nt_description')->label('Notification Description'),
                 IconEntry::make('enabled')->label('Enabled')->boolean(),
                 TextEntry::make('created_at')->label('Created At')->dateTime()->placeholder('-'),
                 TextEntry::make('updated_at')->label('Updated At')->dateTime()->placeholder('-'),

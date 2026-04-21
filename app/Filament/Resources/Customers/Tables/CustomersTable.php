@@ -54,12 +54,16 @@ class CustomersTable
                 TextColumn::make('last_name')->searchable(),
                 TextColumn::make('mobile_number')->searchable(),
                 TextColumn::make('email')->label('Email')->searchable(),
+                TextColumn::make('email_otp')->label('Email OTP')->searchable(),
+                TextColumn::make('mobile_otp')->label('Mobile OTP')->searchable(),
 
                 TextColumn::make('hospital_names')
                     ->label('Hospitals')
                     ->wrap()
-                    ->getStateUsing(function ($record) {
-                        $hospitals = Hospitals::where('customer_id', $record->id)->get();
+                    ->getStateUsing(function ($record) { 
+                        $hospitalIds = explode(',', $record->hospital_id);
+                        $hospitals = Hospitals::whereIn('id', $hospitalIds)->get();
+
                         return $hospitals->isNotEmpty()
                             ? implode(', ', $hospitals->pluck('hospital_name')->toArray())
                             : '-';
@@ -69,7 +73,9 @@ class CustomersTable
                     ->label('Departments')
                     ->wrap()
                     ->getStateUsing(function ($record) {
-                        $hospitals = Hospitals::where('customer_id', $record->id)->get();
+                        $hospitalIds = explode(',', $record->hospital_id);
+                        $hospitals = Hospitals::whereIn('id', $hospitalIds)->get();
+
                         if ($hospitals->isEmpty()) return '-';
 
                         $allDepartments = [];
@@ -84,21 +90,53 @@ class CustomersTable
                 TextColumn::make('hospital_cities')
                     ->label('City')
                     ->wrap()
-                    ->getStateUsing(fn($record) =>
-                        ($cities = Hospitals::where('customer_id', $record->id)->pluck('city')->toArray())
-                            ? implode(', ', $cities) : '-'
-                    ),
+                    ->getStateUsing(function ($record) {
+
+                        if (empty($record->hospital_id)) {
+                            return '-';
+                        }
+
+                        $hospitalIds = collect(explode(',', $record->hospital_id))
+                            ->filter()
+                            ->map(fn ($id) => (int) $id)
+                            ->toArray();
+
+                        $cities = Hospitals::whereIn('id', $hospitalIds)
+                            ->pluck('city')
+                            ->toArray();
+
+                        return !empty($cities) ? implode(', ', $cities) : '-';
+                    }),
 
                 TextColumn::make('hospital_states')
                     ->label('State')
                     ->wrap()
-                    ->getStateUsing(fn($record) =>
-                        ($states = Hospitals::where('customer_id', $record->id)->pluck('state')->toArray())
-                            ? implode(', ', $states) : '-'
-                    ),
+                    ->getStateUsing(function ($record) {
 
-                TextColumn::make('otp_code')->numeric()->sortable(),
+                        if (empty($record->hospital_id)) {
+                            return '-';
+                        }
+
+                        $hospitalIds = collect(explode(',', $record->hospital_id))
+                            ->filter()
+                            ->map(fn ($id) => (int) $id)
+                            ->toArray();
+
+                        $states = Hospitals::whereIn('id', $hospitalIds)
+                            ->pluck('state')
+                            ->toArray();
+
+                        return !empty($states) ? implode(', ', $states) : '-';
+                    }),
+ 
                 IconColumn::make('is_verified')->boolean(),
+                TextColumn::make('account_verify_at')->dateTime()->placeholder('-'),
+                IconColumn::make('is_verified')->boolean()->label('Account Is Verified'),
+                IconColumn::make('is_face_id')->boolean()->label('Is Biometric Enable'),
+                IconColumn::make('is_mpin')->boolean()->label('Is MPIN Enable'),
+                IconColumn::make('is_account_block')->boolean()->label('Account Is Block'),
+                IconColumn::make('is_expired')->boolean()->label('Is Password Expired'),
+                
                 TextColumn::make('created_at')->dateTime()->sortable(),
             ])
             ->defaultSort('created_at', 'desc')

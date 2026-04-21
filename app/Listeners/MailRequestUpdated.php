@@ -91,11 +91,27 @@ class MailRequestUpdated
         if($assigned_person){
             $to[]['email'] = $assigned_person->email;
         }
-
+        
         //$pathToImage = json_decode(file_get_contents(env('APP_URL').'/capture_screenshot/'.$servicerequest->id.'/updated?oldData_employee_code='.$oldData_employee_code));
-        if(env('APP_ENV') != "staging"){
+        
+        if (env('APP_ENV') == "production") {
+            // Live → actual recipients
             Mail::to($to)->cc($cc)
-            ->send(new RequestUpdated($servicerequest->id, $oldData_employee_code, $servicerequest, $customer));
+                ->send(new RequestUpdated($servicerequest->id, $oldData_employee_code, $servicerequest, $customer));
+
+        } else {
+            // Local / Staging → override recipients
+            $testEmails = [
+                'ritik.bansal@lyxelandflamingo.com',
+                'sandeep.gupta@lyxellabs.com'
+            ];
+            Mail::to($testEmails)
+                ->send(new RequestUpdated($servicerequest->id, $oldData_employee_code, $servicerequest, $customer));
+
         }
+        // if(env('APP_ENV') != "staging"){
+        //     Mail::to($to)->cc($cc)
+        //     ->send(new RequestUpdated($servicerequest->id, $oldData_employee_code, $servicerequest, $customer));
+        // }
     }
 }

@@ -10,6 +10,9 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 //use Laratrust\Traits\LaratrustUserTrait;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -18,7 +21,7 @@ class User extends Authenticatable implements FilamentUser
     use Notifiable;
     use HasRoles;
     use HasDatabaseNotifications;
-
+    use LogsActivity;
     /**
      * The attributes that are mass assignable.
      *
@@ -47,5 +50,15 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return true; // You can customize this logic based on your requirements
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    } 
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class, 'subject_id');
     }
 }

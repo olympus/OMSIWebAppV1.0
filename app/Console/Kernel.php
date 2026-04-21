@@ -18,6 +18,10 @@ use App\Console\Commands\PasswordExpired;
 use App\Console\Commands\RemindPasswordExpired; 
 use App\Console\Commands\RequestAcknowledgementNotification; 
 
+use App\Console\Commands\CustomerAccountBlock; 
+use App\Console\Commands\ExpirePopupProducts; 
+
+
 class Kernel extends ConsoleKernel
 {
     /**
@@ -31,7 +35,9 @@ class Kernel extends ConsoleKernel
         SendOtpToCustomer::class, 
         RequestAcknowledgementNotification::class,
         PasswordExpired::class, 
-        RemindPasswordExpired::class,   
+        RemindPasswordExpired::class,
+        CustomerAccountBlock::class,
+        ExpirePopupProducts::class,   
     ];
 
     /**
@@ -56,6 +62,8 @@ class Kernel extends ConsoleKernel
             $schedule->command('notification:send-acknowledgement')->everyFifteenMinutes()->runInBackground();  
             //$schedule->command('PasswordExpired:cron')->dailyAt('01:00')->runInBackground();
             //$schedule->command('RemindPasswordExpired:cron')->dailyAt('01:00')->runInBackground(); 
+            //$schedule->command('app:customer-account-block')->dailyAt('02:00')->runInBackground(); 
+            //$schedule->command('products:expire-popup')->dailyAt('02:00')->runInBackground(); 
 
         //end add new cron
          

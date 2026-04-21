@@ -28,7 +28,7 @@ class EditAcademicRequestData extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
+            //DeleteAction::make(),
         ];
     }
 
@@ -68,7 +68,7 @@ class EditAcademicRequestData extends EditRecord
             $record->sub_type = $fullData['sub_type'] ?? null;
             $record->save();
 
-            NotifyCustomer::send_notification('request_type_changed', $record, $customer);
+            NotifyCustomer::send_new_notification('request_type_changed', $record, $customer);
             $this->notify('success', 'Request Type successfully changed.');
             //return;
         }
@@ -120,7 +120,7 @@ class EditAcademicRequestData extends EditRecord
         ]);
 
         // --- Notify and fire events ---
-        NotifyCustomer::send_notification('request_update', $record, $customer);
+        NotifyCustomer::send_new_notification('request_update', $record, $customer);
         event(new RequestStatusUpdated($record, $customer, $oldData));
         
         return $record;

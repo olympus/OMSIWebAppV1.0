@@ -371,7 +371,7 @@ class AdditionalController extends Controller
         })->get();
         $servicerequest = ServiceRequests::find(61);
         foreach ($customers as $customer) {
-            NotifyCustomer::send_notification('app_update_available', $servicerequest, $customer);
+            NotifyCustomer::send_new_notification('app_update_available', $servicerequest, $customer);
         }
         return 'success';
     }

@@ -158,17 +158,17 @@ $depname = \App\Models\Departments::find($servicerequest->dept_id);
 <td bgcolor=#000080>
 <div align=center><font size=5 color=white><b>Name</b></font></div>
 <td>
-<div align=center><font size=5>{{$assigned_person->name}}</font></div>
+<div align=center><font size=5>{{$assigned_person->name ?? ""}}</font></div>
 <tr valign=top>
 <td bgcolor=#000080>
 <div align=center><font size=5 color=white><b>Mobile Number</b></font></div>
 <td>
-<div align=center><font size=5>{{$assigned_person->mobile}}</font></div>
+<div align=center><font size=5>{{$assigned_person->mobile ?? ""}}</font></div>
 <tr valign=top>
 <td bgcolor=#000080>
 <div align=center><font size=5 color=white><b>Email</b></font></div>
 <td>
-<div align=center><font size=5>{{$assigned_person->email}}</font></div>
+<div align=center><font size=5>{{$assigned_person->email ?? ""}}</font></div>
 </table>
 </div>
 

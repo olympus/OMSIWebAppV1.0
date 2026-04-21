@@ -55,4 +55,19 @@ class VideoResource extends Resource
             'edit' => EditVideo::route('/{record}/edit'),
         ];
     }
+
+    /** When "Other Video" uses a URL, clear any stored upload path (and vice versa). */
+    public static function normalizeOtherVideoFields(array $data): array
+    {
+        if (($data['video_type'] ?? null) !== 'other_video') {
+            return $data;
+        }
+        if (filled($data['url'] ?? null)) {
+            $data['video_file'] = null;
+        } elseif (filled($data['video_file'] ?? null)) {
+            $data['url'] = null;
+        }
+
+        return $data;
+    }
 }

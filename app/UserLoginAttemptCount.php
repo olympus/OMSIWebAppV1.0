@@ -8,6 +8,5 @@ use DateTimeInterface;
 
 class UserLoginAttemptCount extends Model
 {
-
-    protected $fillable = [];
+    protected $guarded = [];
 }

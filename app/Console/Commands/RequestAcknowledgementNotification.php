@@ -52,7 +52,7 @@ class RequestAcknowledgementNotification extends Command
         // foreach ($usersThreeDays as $user) {
         //     $customer = Customers::where('id', $user->customer_id)->first(); 
         //     $servicerequest = ServiceRequests::where('id', $user->id)->first();
-        //     NotifyCustomer::send_notification('request_acknowledgement_after_3_days', $servicerequest, $customer);    
+        //     NotifyCustomer::send_new_notification('request_acknowledgement_after_3_days', $servicerequest, $customer);    
         //     $this->info("3rd-day acknowledgment notification sent to: " . $user->id);
         // }
 
@@ -60,14 +60,14 @@ class RequestAcknowledgementNotification extends Command
         //     $customer = Customers::where('id', $user->customer_id)->first(); 
         //     $servicerequest = ServiceRequests::where('id', $user->id)->first();
 
-        //     NotifyCustomer::send_notification('request_acknowledgement_after_5_days', $servicerequest, $customer);    
+        //     NotifyCustomer::send_new_notification('request_acknowledgement_after_5_days', $servicerequest, $customer);    
         //     $this->info("5th-day acknowledgment notification sent to: " . $user->id);
         // }
         
         foreach ($usersThreeDays as $user) {
             $customer = Customers::where('id', $user->customer_id)->first(); 
             $servicerequest = ServiceRequests::where('id', $user->id)->first();
-            NotifyCustomer::send_notification('request_acknowledgement_after_3_days', $servicerequest, $customer);    
+            NotifyCustomer::send_new_notification('request_acknowledgement_after_3_days', $servicerequest, $customer);    
              
         }
 
@@ -75,7 +75,7 @@ class RequestAcknowledgementNotification extends Command
             $customer = Customers::where('id', $user->customer_id)->first(); 
             $servicerequest = ServiceRequests::where('id', $user->id)->first();
 
-            NotifyCustomer::send_notification('request_acknowledgement_after_5_days', $servicerequest, $customer);    
+            NotifyCustomer::send_new_notification('request_acknowledgement_after_5_days', $servicerequest, $customer);    
             //$this->info("5th-day acknowledgment notification sent to: " . $user->id);
         }
     }

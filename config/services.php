@@ -23,9 +23,9 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+        'key' => env('AWS_ACCESS_KEY_ID', 'AKIATDU3XQUSMXSVVHXT'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY', 'BNUxB1v+Po1NW8RkQsrOC3PI4g4wSGgZF7//LFTEpXwO'),
+        'region' => env('AWS_DEFAULT_REGION', 'ap-south-1'),
     ],
 
     'slack' => [

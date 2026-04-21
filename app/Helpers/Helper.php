@@ -278,4 +278,81 @@ function toMailKey($emails)
         $emails_final[]['email'] = $email;
     }
     return $emails_final;
+} 
+
+//new sms function created on 27 jan for version 3
+
+    function sendCustomerMobileSms($template_name, $customer, $servicerequest = null, $filter_text_msg = null)
+    {   
+        if (!env('SMS_ENABLED')) {
+            return true;
+        }
+
+
+        if ($template_name !== 'send_otp') {
+            return false;
+        }
+
+        if (empty($customer->mobile_number) || empty($customer->mobile_otp)) {
+            return false;
+        } 
+
+        $endpoint = 'send otp';
+        $endpoint = str_replace(' ', '%20', $endpoint);
+        $apiKey = "6c32b91e-a374-11e8-a895-0200cd936042";
+        //$apiKey = env('TWO_FACTOR_API_KEY');
+
+        // ⚠️ IMPORTANT: `send otp` has SPACE
+        $url = "http://2factor.in/API/V1/{$apiKey}/SMS/{$customer->mobile_number}/{$customer->mobile_otp}/{$endpoint}";
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+        ]);
+
+        $response = curl_exec($curl); 
+        
+        $error = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($error) {
+            \Log::error('2Factor SMS Curl Error', ['error' => $error]);
+            return false;
+        }
+
+        \Log::info('2Factor SMS Response', ['response' => $response]);
+
+        return true;
+    }
+
+//new sms function created on 27 jan for version 3
+
+
+
+// ===============================
+// Helper function
+// string ya array dono ko safe array banane ke liye
+// ===============================
+function makeEmailArray($emails)
+{
+
+    if (empty($emails)) {
+        return [];
+    }
+
+    if (is_array($emails)) {
+        return $emails;
+    }
+
+    return explode(',', $emails);
+
 }

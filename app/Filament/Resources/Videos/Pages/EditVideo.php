@@ -11,6 +11,11 @@ class EditVideo extends EditRecord
 {
     protected static string $resource = VideoResource::class;
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return VideoResource::normalizeOtherVideoFields($data);
+    }
+
     protected function getHeaderActions(): array
     {
         return [

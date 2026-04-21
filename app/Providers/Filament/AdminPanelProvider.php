@@ -39,7 +39,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Http\Middleware\RestrictIpAddresses;
+use App\Http\Middleware\RestrictIpAddresses; 
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -51,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->passwordReset()
-            ->homeUrl('/merged-service-requests')
+            ->homeUrl('/admin/merged-service-requests')
 
             ->databaseNotifications()
             ->colors([
@@ -61,6 +61,8 @@ class AdminPanelProvider extends PanelProvider
             // Resource registration removed; Filament will auto-discover resources in app/Filament/Resources
             ->pages([
                 \Filament\Pages\Dashboard::class,
+                //\App\Filament\Pages\DashboardRedirect::class,
+
                 CheckEmail::class,
                 SapImport::class,
                 EsasImport::class,
@@ -143,8 +145,8 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\SouthStatusChart::class,
                 \App\Filament\Widgets\SouthTatChart::class,
 
-//                AccountWidget::class,
-//                FilamentInfoWidget::class,
+                //AccountWidget::class,
+                //FilamentInfoWidget::class,
             ])
             ->middleware([
                 RestrictIpAddresses::class,
@@ -157,9 +159,9 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ])
+            ]) 
             ->plugins([
-                FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make(), 
             ])
             ->authMiddleware([
                 Authenticate::class,

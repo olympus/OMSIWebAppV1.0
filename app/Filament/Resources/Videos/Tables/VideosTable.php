@@ -27,6 +27,17 @@ class VideosTable
                 TextColumn::make('title')
                     ->searchable()->sortable(),
 
+                TextColumn::make('video_type')
+                    ->searchable()->sortable(),
+
+                // TextColumn::make('url')
+                //     ->label('URL')
+                //     ->url(fn ($record) => $record->url, shouldOpenInNewTab: true)
+                //     ->sortable(query: function ($query, string $direction) {
+                //         $query->orderBy('url', $direction);
+                //     })
+                //     ->searchable(),
+                    
                 // TextColumn::make('url')
                 //     ->label('URL')
                 //     ->url(fn ($record) => $record->url, shouldOpenInNewTab: true) // ✅ correct way in Filament 4
@@ -36,21 +47,23 @@ class VideosTable
                 //     ->copyMessage('URL copied!')
                 //     ->copyMessageDuration(1500),
 
-                TextColumn::make('url')
-                    ->label('URL')
-                    ->url(fn ($record) => $record->url, shouldOpenInNewTab: true)
-                    ->sortable(query: function ($query, string $direction) {
-                        $query->orderBy('url', $direction);
-                    })
-                    ->searchable(),
+                
 
-                TextColumn::make('description')
-                    ->label('Description')
-                    ->searchable()->sortable(),
+                // TextColumn::make('description')
+                //     ->label('Description')
+                //     ->searchable()->sortable(),
 
                 // TextColumn::make('nt_description')
                 //     ->label('Description')
                 //     ->searchable()->sortable(),
+
+                IconColumn::make('is_trending')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->label('Is Trending'),
 
                 IconColumn::make('enabled')
                     ->boolean()
@@ -59,7 +72,7 @@ class VideosTable
                     ->trueColor('success')
                     ->falseColor('danger')
                     ->label('Status'),
-                
+
                 TextColumn::make('views')
                 ->label('Views')
                 ->getStateUsing(fn ($record) => $record->customers?->count() ?? 0),
@@ -69,15 +82,16 @@ class VideosTable
                     ->dateTime('d M Y h:i a')
                     ->sortable(),
 
-                TextColumn::make('updated_at')
-                    ->dateTime('d M Y h:i a')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // TextColumn::make('updated_at')
+                //     ->dateTime('d M Y h:i a')
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
 
             ->filters([
                 // (optional filters can be added later)
             ])
+            ->defaultSort('id', 'desc')
 
             ->recordActions([
                 ViewAction::make(),
@@ -98,11 +112,11 @@ class VideosTable
 
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    //DeleteBulkAction::make(),
                 ]),
 
                 // ✅ Export All Data Button
-                Action::make('export_all')
+                /*Action::make('export_all')
                     ->label('Export All Data')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('primary')
@@ -168,7 +182,7 @@ class VideosTable
                         };
 
                         return response()->stream($callback, 200, $headers);
-                    }),
+                    }),*/
             ]);
     }
 }

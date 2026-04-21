@@ -1027,14 +1027,31 @@ class GetCharts
                 if (!is_null($request->feedback_id)) {
                     $feedback = Feedback::where('id', $request->feedback_id)->get();
                     $feedback = $feedback[0];
+                    $region = strtolower((string) $request->region);
+
                     array_push($chart72_average_1, $feedback['response_speed']);
-                    array_push(${'chart72_'.$request->region.'_1'}, $feedback['response_speed']);
+                    $chart72RegionField1 = 'chart72_'.$region.'_1';
+                    if (isset(${$chart72RegionField1}) && is_array(${$chart72RegionField1})) {
+                        array_push(${$chart72RegionField1}, $feedback['response_speed']);
+                    }
+
                     array_push($chart72_average_2, $feedback['quality_of_response']);
-                    array_push(${'chart72_'.$request->region.'_2'}, $feedback['quality_of_response']);
+                    $chart72RegionField2 = 'chart72_'.$region.'_2';
+                    if (isset(${$chart72RegionField2}) && is_array(${$chart72RegionField2})) {
+                        array_push(${$chart72RegionField2}, $feedback['quality_of_response']);
+                    }
+
                     array_push($chart72_average_3, $feedback['app_experience']);
-                    array_push(${'chart72_'.$request->region.'_3'}, $feedback['app_experience']);
+                    $chart72RegionField3 = 'chart72_'.$region.'_3';
+                    if (isset(${$chart72RegionField3}) && is_array(${$chart72RegionField3})) {
+                        array_push(${$chart72RegionField3}, $feedback['app_experience']);
+                    }
+
                     array_push($chart72_average_4, $feedback['olympus_staff_performance']);
-                    array_push(${'chart72_'.$request->region.'_4'}, $feedback['olympus_staff_performance']);
+                    $chart72RegionField4 = 'chart72_'.$region.'_4';
+                    if (isset(${$chart72RegionField4}) && is_array(${$chart72RegionField4})) {
+                        array_push(${$chart72RegionField4}, $feedback['olympus_staff_performance']);
+                    }
                 }
             }
             $chart72 = [
@@ -1072,8 +1089,11 @@ class GetCharts
                     } else {
                         $current_status = $request->status;
                     }
-                    $var_name = 'chart73_'.$request->region.'_'.$current_status;
-                    ${$var_name}++;
+                    $region = strtolower((string) $request->region);
+                    $var_name = 'chart73_'.$region.'_'.$current_status;
+                    if (isset(${$var_name})) {
+                        ${$var_name}++;
+                    }
                 }
             }
             $chart73 = [

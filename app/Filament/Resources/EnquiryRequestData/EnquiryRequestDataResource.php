@@ -37,6 +37,7 @@ class EnquiryRequestDataResource extends Resource
             'Assigned', 
             'Attended', 
             'Closed',
+            'All Requests',
         ];
 
         $items = [];
@@ -82,7 +83,10 @@ class EnquiryRequestDataResource extends Resource
             elseif($status == 'Closed'){
                 $show_status = "Closed";
                 $status = "Closed";
-            } 
+            }elseif($status == 'All Requests'){
+                $show_status = "All Requests";
+                $status = "";
+            }
 
             $activeCount = ServiceRequests::where('request_type', 'like', '%enquiry%')
                 ->when($status, function ($q) use ($status) {

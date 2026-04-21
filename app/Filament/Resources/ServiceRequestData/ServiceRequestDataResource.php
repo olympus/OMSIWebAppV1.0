@@ -12,20 +12,29 @@ use App\Filament\Resources\ServiceRequestData\Schemas\ServiceRequestDataInfolist
 
 use App\Models\ServiceRequests;
 use App\Models\ArchiveServiceRequests;
-use App\Models\CombinedServiceRequests;
+use App\Models\CombinedServiceRequests; 
+use Filament\Support\Colors\Color;
 use BackedEnum;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Filament\Navigation\NavigationItem;
-use Filament\Support\Colors\Color;
-
+use UnitEnum;
 class ServiceRequestDataResource extends Resource
 {
     protected static ?string $model = CombinedServiceRequests::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?int $navigationSort = 2;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Requests';
+
+    //protected static ?int $navigationGroupSort = 2;
+    
+    protected static ?string $navigationLabel = 'Service Requests';
 
     /**
      * ✅ Dynamic side navigation — counts from BOTH tables.
@@ -46,6 +55,7 @@ class ServiceRequestDataResource extends Resource
             'Dispatched',
             //'Under Repair',
             'Closed',
+            'All Requests',
         ];
 
         $items = [];
@@ -87,6 +97,9 @@ class ServiceRequestDataResource extends Resource
             }elseif($status == 'Closed'){
                 $show_status = "Closed";
                 $status = "Closed";
+            }elseif($status == 'All Requests'){
+                $show_status = "All Requests";
+                $status = "";
             } 
 
             $activeCount = ServiceRequests::where('request_type', 'like', '%service%')
