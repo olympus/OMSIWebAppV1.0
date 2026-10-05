@@ -9,7 +9,10 @@ use App\Models\RoiCalculatorSection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\RoiOtp;
+use App\Mail\Revamp\RoiCalculatorCustomerMail;
+use App\Mail\Revamp\RoiCalculatorInternalMail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 class ROICalculatorController extends Controller
 {
 
@@ -213,10 +216,38 @@ class ROICalculatorController extends Controller
     // VERIFY OTP
     public function verifyROIOtp(Request $request)
     {
-        $request->validate([
-            'mobile' => 'required|digits:10',
-            'otp' => 'required|digits:6'
+        $validator = Validator::make($request->all(), [
+            'mobile' => [
+                'required',
+                'regex:/^[0-9]{10}$/'
+            ],
+            'otp' => 'required|digits:6',
+            'name' => [
+                'bail',
+                'required',
+                'regex:/^[A-Za-z ]+$/',
+                'max:255'
+            ],
+            'email' => [
+                'required',
+                'email',
+                'max:255'
+            ],
+        ], [
+            'name.required' => 'Name is required',
+            'name.regex' => 'Name must contain only letters',
+            'email.required' => 'Email is required',
+            'email.email' => 'Invalid email',
+            'mobile.required' => 'Mobile number is required',
+            'mobile.regex' => 'Mobile must be 10 digits',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status_code' => 422,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
 
         $otpData = RoiOtp::where('mobile',$request->mobile)
                         ->where('otp',$request->otp)
@@ -229,7 +260,7 @@ class ROICalculatorController extends Controller
             ], 200);  
         }
 
-        // check expiry (5 minutes)
+        // check expiry (10 minutes)
         if(Carbon::parse($otpData->created_at)->addMinutes(10)->isPast()){
             
             return response()->json([
@@ -239,10 +270,69 @@ class ROICalculatorController extends Controller
 
         }
 
+        try {
+            $roi = RoiCalculator::create([
+                'name' => trim($request->name),
+                'email' => trim($request->email),
+                'mobile' => trim($request->mobile),
+                'hospital_name' => trim((string) $request->hospital_name),
+                'speciality' => trim((string) $request->speciality),
+                'state' => trim((string) $request->state),
+                'city' => trim((string) $request->city),
+                'pincode' => trim((string) $request->pincode),
+                'customer_status' => trim((string) $request->customer_status),
+                'processor_profile' => trim((string) $request->processor_profile),
+                'endoscopy_suite' => trim((string) $request->endoscopy_suite),
+                'procedure_performer' => trim((string) $request->procedure_performer),
+                'procedures_performed' => trim((string) $request->procedures_performed),
+            ]);
+
+            $this->sendRoiCalculatorEmails($roi);
+        } catch (\Exception $e) {
+            Log::error('ROI Calculator OTP Verification Error', [
+                'message' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status_code' => 500,
+                'message' => 'Something went wrong'
+            ], 500);
+        }
+
         return response()->json([
             'status_code' => 200,
             'message' => 'OTP verified successfully', 
         ], 200);   
+    }
+
+    private function sendRoiCalculatorEmails(RoiCalculator $roi): void
+    {
+        if (env('APP_ENV') === 'staging') {
+            return;
+        }
+
+        try {
+            if (env('APP_ENV') === 'local') {
+                $internalEmails = 'ritik.bansal@lyxelandflamingo.com';
+            } else {
+                $internalEmails = array_values(array_filter([
+                    config('oly.roi_calculator.marketing_spoc'),
+                    config('oly.roi_calculator.sales_marketing_head'),
+                    config('oly.roi_calculator.local_level_sales'),
+                ]));
+            }
+
+            Mail::to($roi->email)->send(new RoiCalculatorCustomerMail($roi));
+
+            if (!empty($internalEmails)) {
+                Mail::to($internalEmails)->send(new RoiCalculatorInternalMail($roi));
+            }
+        } catch (\Exception $e) {
+            Log::error('ROI Calculator mail sending failed', [
+                'roi_id' => $roi->id,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function getSectionData()

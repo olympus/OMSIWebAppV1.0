@@ -47,22 +47,7 @@ class RequestAcknowledgementNotification extends Command
         // $usersFiveDays = ServiceRequests::where('id', 20449)->get();
 
         $usersThreeDays = ServiceRequests::whereDate('happy_code_delivered_time', $threeDaysAgo)->get();
-        $usersFiveDays = ServiceRequests::whereDate('happy_code_delivered_time', $fiveDaysAgo)->get();
-
-        // foreach ($usersThreeDays as $user) {
-        //     $customer = Customers::where('id', $user->customer_id)->first(); 
-        //     $servicerequest = ServiceRequests::where('id', $user->id)->first();
-        //     NotifyCustomer::send_new_notification('request_acknowledgement_after_3_days', $servicerequest, $customer);    
-        //     $this->info("3rd-day acknowledgment notification sent to: " . $user->id);
-        // }
-
-        // foreach ($usersFiveDays as $user) {
-        //     $customer = Customers::where('id', $user->customer_id)->first(); 
-        //     $servicerequest = ServiceRequests::where('id', $user->id)->first();
-
-        //     NotifyCustomer::send_new_notification('request_acknowledgement_after_5_days', $servicerequest, $customer);    
-        //     $this->info("5th-day acknowledgment notification sent to: " . $user->id);
-        // }
+        $usersFiveDays = ServiceRequests::whereDate('happy_code_delivered_time', $fiveDaysAgo)->get(); 
         
         foreach ($usersThreeDays as $user) {
             $customer = Customers::where('id', $user->customer_id)->first(); 

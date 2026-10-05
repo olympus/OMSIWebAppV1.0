@@ -15,21 +15,21 @@ use App\Models\{
     EmployeeTeam,
     User
 };
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class CheckEmail extends Page implements Forms\Contracts\HasForms
 {
 
     use Forms\Concerns\InteractsWithForms;
+    use HasPageShield;
 
     protected string $view = 'filament.pages.check-email';
-    protected static ?string $navigationLabel = 'Check Email';
+    protected static ?string $navigationLabel = 'Check Email Exists';
     protected static ?string $slug = 'check-email';
     protected static ?string $title = 'Check Email';
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-envelope';
     protected static ?int $navigationSort = 1;
-    protected static ?int $navigationGroupSort = 5;
-
-    // protected static string|UnitEnum|null $navigationGroup = 'Tools';
+    protected static string|\UnitEnum|null $navigationGroup = 'Teams';
 
     public ?string $email = null;
     public ?string $message = null;

@@ -5,6 +5,8 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\CheckEmail;
 use App\Filament\Pages\SapImport;
 use App\Filament\Pages\EsasImport;
+use App\Filament\Pages\AdminDashboard;
+use App\Filament\Pages\RegionalDashboardsHub;
 use App\Filament\Pages\ArchiveDataFilter;
 use App\Filament\Pages\EastDashboard;
 use App\Filament\Pages\WestDashboard;
@@ -25,9 +27,6 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\Pages\Home;
-use App\Filament\Pages\RegionalDashboard;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -40,6 +39,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Http\Middleware\RestrictIpAddresses; 
+use App\Http\Middleware\RestrictNonProductionMailRecipients;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -57,20 +57,34 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->navigationGroups([
+                'Dashboard',
+                'Requests',
+                'Service Requests',
+                'Academic Requests',
+                'Enquiry Requests',
+                'Feedback',
+                'Customers',
+                'Teams',
+                'Auto Emails',
+                'Others',
+                'Development',
+                __('filament-shield::filament-shield.nav.group'),
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             // Resource registration removed; Filament will auto-discover resources in app/Filament/Resources
             ->pages([
-                \Filament\Pages\Dashboard::class,
-                //\App\Filament\Pages\DashboardRedirect::class,
+                AdminDashboard::class,
+                RegionalDashboardsHub::class,
+                NorthDashboard::class,
+                SouthDashboard::class,
+                EastDashboard::class,
+                WestDashboard::class,
 
                 CheckEmail::class,
                 SapImport::class,
                 EsasImport::class,
                 ArchiveDataFilter::class,
-                EastDashboard::class,
-                WestDashboard::class,
-                NorthDashboard::class,
-                SouthDashboard::class, 
             ])
             ->widgets([
                 DashboardStats::class,
@@ -150,6 +164,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->middleware([
                 RestrictIpAddresses::class,
+                RestrictNonProductionMailRecipients::class,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,

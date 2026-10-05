@@ -105,19 +105,28 @@ class EditAcademicRequestData extends EditRecord
             'last_updated_by' => Auth::user()->name ?? 'System',
         ];
 
+        /*
         // Perform update
         $model::where('id', $record['id'])->update($updateData);
 
         // Optional: return updated record
         $updatedRecord = $model::find($record['id']);
- 
+        */
+
+        $req->update($updateData);
+
+        // 🔥 sync record object
+        $record = $req;
 
         // --- Add status timeline ---
-        StatusTimeline::create([
-            'status' => $record->status,
-            'customer_id' => $record->customer_id,
-            'request_id' => $record->id,
-        ]);
+        if ($oldData->status !== $record->status) {            
+            StatusTimeline::create([
+                'status' => $record->status,
+                //'status' => $fullData['status'] ?? null,
+                'customer_id' => $record->customer_id,
+                'request_id' => $record->id,
+            ]);
+        }
 
         // --- Notify and fire events ---
         NotifyCustomer::send_new_notification('request_update', $record, $customer);

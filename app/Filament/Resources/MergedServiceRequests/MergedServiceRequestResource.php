@@ -11,19 +11,19 @@ use App\Filament\Resources\MergedServiceRequests\Schemas\MergedServiceRequestInf
 use App\Filament\Resources\MergedServiceRequests\Tables\MergedServiceRequestsTable;
 use App\Models\MergedServiceRequest;
 use BackedEnum;
-use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema as SchemaFacade;
 use UnitEnum;
 
 class MergedServiceRequestResource extends Resource
 {
     protected static ?string $model = MergedServiceRequest::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-viewfinder-circle';
 
     protected static ?string $recordTitleAttribute = 'request_type';
     
@@ -68,15 +68,57 @@ class MergedServiceRequestResource extends Resource
         ];
     }
 
+    /**
+     * The admin "All Requests" screen expects rows from merged_service_requests (DB view).
+     * That view is often missing in local DBs; build the same result from active + archive tables.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        $serviceTable = 'service_requests';
+        $archiveTable = 'archive_service_requests';
+
+        if (! SchemaFacade::hasTable($serviceTable) || ! SchemaFacade::hasTable($archiveTable)) {
+            return parent::getEloquentQuery();
+        }
+
+        $serviceCols = SchemaFacade::getColumnListing($serviceTable);
+        $archiveCols = SchemaFacade::getColumnListing($archiveTable);
+
+        $allCols = array_values(array_unique(array_merge($serviceCols, $archiveCols)));
+        sort($allCols);
+
+        $allCols = array_values(array_filter($allCols, static fn (string $name): bool => (bool) preg_match('/^[a-zA-Z0-9_]+$/', $name)));
+
+        $selectSql = static function (string $table, array $tableCols) use ($allCols): string {
+            $segments = [];
+            foreach ($allCols as $col) {
+                $segments[] = in_array($col, $tableCols, true)
+                    ? "{$table}.`{$col}`"
+                    : "NULL as `{$col}`";
+            }
+
+            return implode(', ', $segments);
+        };
+
+        $union = DB::table($serviceTable)
+            ->selectRaw($selectSql($serviceTable, $serviceCols).", 'active' as `source`")
+            ->unionAll(
+                DB::table($archiveTable)->selectRaw($selectSql($archiveTable, $archiveCols).", 'archive' as `source`")
+            );
+
+        return MergedServiceRequest::query()->fromSub($union, 'merged_service_requests');
+    }
+
     public static function getNavigationBadge(): ?string
     {
-        // Example: show pending order count
-        return (string) MergedServiceRequest::where('source','active')->count();
+        $count = static::getEloquentQuery()->count();
+
+        return $count > 0 ? (string) $count : null;
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
-        return 'warning'; // success, danger, primary, etc.
+        return 'info';
     }
 
 //    public static function getNavigationItems(): array

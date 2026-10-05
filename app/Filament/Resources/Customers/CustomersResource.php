@@ -17,16 +17,33 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class CustomersResource extends Resource
 {
     protected static ?string $model = Customers::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    protected static ?int $navigationSort = 2;
-
     protected static ?string $recordTitleAttribute = 'first_name';
-    protected static ?int $navigationGroupSort = 4;
+
+    protected static ?string $navigationLabel = 'Customers Master';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Customers';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Customers::query()->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
+    }
 
     public static function form(Schema $schema): Schema
     {

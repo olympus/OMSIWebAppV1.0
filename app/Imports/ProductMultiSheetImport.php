@@ -124,6 +124,7 @@ class ProductVideoSheetImport implements ToModel, WithHeadingRow, WithValidation
             [
                 'video_url' => $row['video_url'],
                 'video_file' => $row['video_file'],
+                'video_type' => $row['video_type'],
                 'video_thumbnail' => $row['video_thumbnail'],
                 'video_alt_text' => $row['video_alt_text'],
                 'status' => strtolower($row['status']) === 'active' ? 1 : 0,

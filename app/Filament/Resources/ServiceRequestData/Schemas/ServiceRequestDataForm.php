@@ -163,7 +163,6 @@ class ServiceRequestDataForm
                 ->options([
                     'Received' => 'Received',
                     'Assigned' => 'Assigned',
-                    'Attended' => 'Attended',
                     'Re-assigned' => 'Re Assigned',
                     'Received_At_Repair_Center' => 'Brought to SC',
                     'Quotation_Prepared' => 'Quotation Prepared',

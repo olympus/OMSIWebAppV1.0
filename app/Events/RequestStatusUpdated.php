@@ -5,7 +5,7 @@ namespace App\Events;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use App\Models\CombinedServiceRequests;
+use Illuminate\Database\Eloquent\Model;
 
 class RequestStatusUpdated
 {
@@ -15,7 +15,7 @@ class RequestStatusUpdated
     public $oldData;
     public $customer;
 
-    public function __construct(CombinedServiceRequests $servicerequest, $customer, $oldData)
+    public function __construct(Model $servicerequest, $customer, $oldData)
     {
         $this->servicerequest = $servicerequest;
         $this->oldData = $oldData;

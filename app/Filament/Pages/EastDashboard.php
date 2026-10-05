@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Widgets\EastDashboardStats;
 use App\Filament\Widgets\EastCustomerTitleChart;
 use App\Filament\Widgets\EastCustomerTrendChart;
@@ -22,11 +23,11 @@ class EastDashboard extends Page
 {
     protected static ?string $navigationLabel = 'East';
     protected static ?string $slug = 'dashboard/east';
-    protected static string|\UnitEnum|null $navigationGroup = 'Home';
+    protected static string|\UnitEnum|null $navigationGroup = 'Dashboard';
+    protected static ?string $navigationParentItem = 'Home';
     protected static ?string $title = 'East Dashboard';
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-home';
+    protected static string|null|\BackedEnum $navigationIcon = Heroicon::OutlinedHome;
     protected static ?int $navigationSort = 3;
-    protected static ?int $navigationGroupSort = 5;
 
     protected string $view = 'filament.pages.east-dashboard';
 

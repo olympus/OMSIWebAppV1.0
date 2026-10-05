@@ -9,7 +9,7 @@ use App\CustomerShowPromailer;
 use App\Models\Departments; 
 use App\Mail\FeedbackCreated;
 use App\Mail\RequestCreated;
-use App\Mail\RequestEscalated;
+use App\Mail\Revamp\RequestEscalated;
 use App\Models\ArchiveServiceRequests;
 use App\Models\AutoEmails;
 use App\Models\Customers;
@@ -23,7 +23,7 @@ use App\Models\ProductInfo;
 use App\Promailer;
 use App\RequestReminderHistory;
 use App\SFDC;
-use App\StatusTimeline;
+use App\Models\StatusTimeline;
 use App\TechnicalReport;
 use Carbon\Carbon;
 use Config;
@@ -340,6 +340,12 @@ class RequestAPIController extends Controller
 
         $deptName = Departments::where('dept_id', $req->dept_id)
             ->value('name');
+
+
+        if($req->dept_id == 7){
+            $deptName = Hospitals::where('id', $req->hospital_id)
+            ->value('other_department_name');
+        }
 
         $item = clone $req;
 
@@ -1423,13 +1429,13 @@ class RequestAPIController extends Controller
 
                         if(env("SFDC_ENABLED")){
 
-                            Log::channel('acknowledgement_sms')->info("Check Acknowledge Request Status");
+                            //Log::channel('acknowledgement_sms')->info("Check Acknowledge Request Status");
 
                             $SFDCCreateRequest = SFDC::acknowledgeRequestHappyCode($acknowledgement_status_key, $request_id_key);
 
-                            Log::channel('acknowledgement_sms')->info($SFDCCreateRequest);
-                            Log::channel('acknowledgement_sms')->info("\n === SFDC acknowledge status success"."\n\n");
-                            Log::channel('acknowledgement_sms')->info($SFDCCreateRequest);
+                            //Log::channel('acknowledgement_sms')->info($SFDCCreateRequest);
+                            //Log::channel('acknowledgement_sms')->info("\n === SFDC acknowledge status success"."\n\n");
+                            //Log::channel('acknowledgement_sms')->info($SFDCCreateRequest);
 
                             ServiceRequests::where('id', $request_id)->update([
                                 'happy_code' => null,

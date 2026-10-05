@@ -20,7 +20,7 @@ use App\Mail\DailyPendingWeekLate;
 use App\Mail\MonthlyCustomerList;
 use App\Mail\MonthlyFeedBackReport;
 use App\Models\ServiceRequests;
-use App\Models\Reportsetting;
+use App\Reportsetting;
 use App\Models\Customers;
 use App\Models\Hospitals;
 use App\Models\Departments;
@@ -644,35 +644,35 @@ class NewReportsController extends Controller
             Mail::to($to_final)->cc($cc_final)->send(new WeeklyEscalationReport($excelname, $excelpath, $daterange_from, $daterange_to));
         */
 
-        $to_final = [];
-        $cc_final = [];
+        $nonProductionRecipient = 'ritik.bansal@lyxelandflamingo.com';
 
-        if (App::environment('local')) {
+        if (app()->environment('production')) {
+            $to_emails_raw = Reportsetting::where('name', 'report_receivedrequests')->value('to_emails');
+            $cc_emails_raw = Reportsetting::where('name', 'report_receivedrequests')->value('cc_emails');
 
-            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
+            $to_final = [];
+            foreach (array_filter(array_map('trim', explode(',', (string) $to_emails_raw))) as $address) {
+                if ($address !== '') {
+                    $to_final[] = ['email' => $address];
+                }
+            }
 
+            $cc_final = [];
+            foreach (array_filter(array_map('trim', explode(',', (string) $cc_emails_raw))) as $address) {
+                if ($address !== '') {
+                    $cc_final[] = ['email' => $address];
+                }
+            }
         } else {
-
-            // Production environment — use actual report settings
-            $to_emails = Reportsetting::where('name', 'report_receivedrequests')->value('to_emails');
-            $to_emails = explode(',', $to_emails);
-
-            foreach ($to_emails as $email) {
-                $to_final[]['email'] = trim($email);
-            }
-
-            $cc_emails = Reportsetting::where('name', 'report_receivedrequests')->value('cc_emails');
-            $cc_emails = explode(',', $cc_emails);
-
-            // Add additional CC emails in production
-            $cc_emails[] = "ritik.bansal@lyxelandflamingo.com";
-            $cc_emails[] = "komal.sen@olympus.com";
-
-            foreach ($cc_emails as $email) {
-                $cc_final[]['email'] = trim($email);
-            }
+            $to_final = [['email' => $nonProductionRecipient]];
+            $cc_final = [];
         }
-        Mail::to($to_final)->cc($cc_final)->send(new WeeklyEscalationReport($excelname, $excelpath, $daterange_from, $daterange_to));
+
+        $mail = Mail::to($to_final);
+        if ($cc_final !== []) {
+            $mail->cc($cc_final);
+        }
+        $mail->send(new WeeklyEscalationReport($excelname, $excelpath, $daterange_from, $daterange_to));
 
         Storage::disk('exports')->delete($excelpath . '.xls');
 

@@ -12,32 +12,25 @@ use App\Filament\Resources\ServiceRequestData\Schemas\ServiceRequestDataInfolist
 
 use App\Models\ServiceRequests;
 use App\Models\ArchiveServiceRequests;
-use App\Models\CombinedServiceRequests; 
-use Filament\Support\Colors\Color;
+use App\Models\CombinedServiceRequests;
 use BackedEnum;
-use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use UnitEnum;
+
 class ServiceRequestDataResource extends Resource
 {
     protected static ?string $model = CombinedServiceRequests::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
     protected static ?int $navigationSort = 2;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Requests';
-
-    //protected static ?int $navigationGroupSort = 2;
-    
     protected static ?string $navigationLabel = 'Service Requests';
 
     /**
-     * ✅ Dynamic side navigation — counts from BOTH tables.
+     * Side navigation: one item per status (collapsible group "Service Requests").
      */
     public static function getNavigationItems(): array
     {
@@ -53,73 +46,73 @@ class ServiceRequestDataResource extends Resource
             'Repair Completed',
             'Ready To Dispatch',
             'Dispatched',
-            //'Under Repair',
             'Closed',
             'All Requests',
         ];
 
         $items = [];
+        $sort = 1;
 
         foreach ($statuses as $status) {
-            if($status == 'Received'){
-                $show_status = "Received";
-                $status = "Received";
-            }elseif($status == 'Assigned'){
-                $show_status = "Assigned";
-                $status = "Assigned";
-            }elseif($status == 'Re Assigned'){
-                $show_status = "Re Assigned";
-                $status = "Re-assigned";
-            }elseif($status == 'Attended'){
-                $show_status = "Attended";
-                $status = "Attended";
-            }elseif($status == 'Received At Repair Center'){
-                $show_status = "Received At Repair Center";
-                $status = "Received_At_Repair_Center";
-            }elseif($status == 'Quotation Prepared'){
-                $show_status = "Quotation Prepared";
-                $status = "Quotation_Prepared";
-            }elseif($status == 'PO Received'){
-                $show_status = "PO Received";
-                $status = "PO_Received";
-            }elseif($status == 'Repair Started'){
-                $show_status = "Repair Started";
-                $status = "Repair_Started";
-            }elseif($status == 'Repair Completed'){
-                $show_status = "Repair Completed";
-                $status = "Repair_Completed";
-            }elseif($status == 'Ready To Dispatch'){
-                $show_status = "Ready To Dispatch";
-                $status = "Ready_To_Dispatch";
-            }elseif($status == 'Dispatched'){
-                $show_status = "Dispatched";
-                $status = "Dispatched";
-            }elseif($status == 'Closed'){
-                $show_status = "Closed";
-                $status = "Closed";
-            }elseif($status == 'All Requests'){
-                $show_status = "All Requests";
-                $status = "";
-            } 
+            if ($status === 'Received') {
+                $show_status = 'Received';
+                $status = 'Received';
+            } elseif ($status === 'Assigned') {
+                $show_status = 'Assigned';
+                $status = 'Assigned';
+            } elseif ($status === 'Re Assigned') {
+                $show_status = 'Re Assigned';
+                $status = 'Re-assigned';
+            } elseif ($status === 'Attended') {
+                $show_status = 'Attended';
+                $status = 'Attended';
+            } elseif ($status === 'Received At Repair Center') {
+                $show_status = 'Received At Repair Center';
+                $status = 'Received_At_Repair_Center';
+            } elseif ($status === 'Quotation Prepared') {
+                $show_status = 'Quotation Prepared';
+                $status = 'Quotation_Prepared';
+            } elseif ($status === 'PO Received') {
+                $show_status = 'PO Received';
+                $status = 'PO_Received';
+            } elseif ($status === 'Repair Started') {
+                $show_status = 'Repair Started';
+                $status = 'Repair_Started';
+            } elseif ($status === 'Repair Completed') {
+                $show_status = 'Repair Completed';
+                $status = 'Repair_Completed';
+            } elseif ($status === 'Ready To Dispatch') {
+                $show_status = 'Ready To Dispatch';
+                $status = 'Ready_To_Dispatch';
+            } elseif ($status === 'Dispatched') {
+                $show_status = 'Dispatched';
+                $status = 'Dispatched';
+            } elseif ($status === 'Closed') {
+                $show_status = 'Closed';
+                $status = 'Closed';
+            } elseif ($status === 'All Requests') {
+                $show_status = 'All Requests';
+                $status = '';
+            }
 
             $activeCount = ServiceRequests::where('request_type', 'like', '%service%')
                 ->when($status, function ($q) use ($status) {
                     $q->where('status', $status);
                 })->count();
 
-            //where('status', $status)->count();
             $archiveCount = ArchiveServiceRequests::where('request_type', 'like', '%service%')
                 ->when($status, function ($q) use ($status) {
                     $q->where('status', $status);
                 })->count();
-                //where('status', $status)->count();
+
             $totalCount = $activeCount + $archiveCount;
 
             $items[] = NavigationItem::make("{$show_status} ({$totalCount})")
                 ->icon('heroicon-o-clipboard-document-list')
                 ->group('Service Requests')
-                ->url(static::getUrl('index', ['status' => $status]))
-                ->badge($totalCount ?: null);
+                ->sort($sort++)
+                ->url(static::getUrl('index', array_filter(['status' => $status])))
+                ->badge($totalCount > 0 ? (string) $totalCount : null);
         }
 
         return $items;

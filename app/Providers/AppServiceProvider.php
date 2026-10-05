@@ -3,9 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
 use App\Http\Responses\LoginResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Activity; // ✅ THIS LINE IS MISSING (IMPORTANT)
 use Illuminate\Support\Str;
@@ -107,6 +108,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {   
+        /*if (! app()->environment('production')) {
+            Mail::alwaysTo([
+                'ritik.bansal@lyxelandflamingo.com',
+                'dipesh.singh@lyxelandflamingo.com',
+            ]);
+        }*/
 
         Event::listen('eloquent.created: *', function ($event, $models) {
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Widgets\SouthDashboardStats;
 use App\Filament\Widgets\SouthCustomerTitleChart;
 use App\Filament\Widgets\SouthCustomerTrendChart;
@@ -22,11 +23,11 @@ class SouthDashboard extends Page
 {
     protected static ?string $navigationLabel = 'South';
     protected static ?string $slug = 'dashboard/south';
-    protected static string|\UnitEnum|null $navigationGroup = 'Home';
+    protected static string|\UnitEnum|null $navigationGroup = 'Dashboard';
+    protected static ?string $navigationParentItem = 'Home';
     protected static ?string $title = 'South Dashboard';
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-home';
+    protected static string|null|\BackedEnum $navigationIcon = Heroicon::OutlinedHome;
     protected static ?int $navigationSort = 2;
-    protected static ?int $navigationGroupSort = 5;
 
     protected string $view = 'filament.pages.south-dashboard';
 

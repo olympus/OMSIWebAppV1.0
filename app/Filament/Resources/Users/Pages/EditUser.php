@@ -11,10 +11,34 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\AdminPasswordHistory;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
+
+    /**
+     * Spatie morphToMany + Select::relationship(modifyQueryUsing) can fail to hydrate multiple roles.
+     * Set role ids explicitly (string keys) so the multi-select matches Filament/JS expectations.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data = parent::mutateFormDataBeforeFill($data);
+
+        $guard = config('auth.defaults.guard', 'web');
+
+        $data['roles'] = $this->record->roles()
+            ->where('guard_name', $guard)
+            ->orderBy('id')
+            ->pluck('id')
+            ->map(static fn ($id): string => (string) $id)
+            ->all();
+
+        return $data;
+    }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
@@ -127,16 +151,20 @@ class EditUser extends EditRecord
                 $data['password_updated_at'] = Carbon::now();
                 $data['is_expired'] = 0;
 
-                // Handle password history (keep only last 5)
+                // Handle password history (keep only last 5 after inserting the new one)
                 $total_password = AdminPasswordHistory::where('user_id', $user->id)->count();
                 if ($total_password >= 5) {
-                    $old_pass_delete = AdminPasswordHistory::where('user_id', $user->id)
-                        ->orderBy('created_at', 'desc')
-                        ->skip(4) // Keep the latest 4, delete the rest
-                        ->get();
-                    foreach ($old_pass_delete as $old_pass_deletes) {
-                        AdminPasswordHistory::where('id', $old_pass_deletes->id)->delete();
-                    }
+                    $idsToKeep = AdminPasswordHistory::query()
+                        ->where('user_id', $user->id)
+                        ->orderByDesc('created_at')
+                        ->orderByDesc('id')
+                        ->limit(4)
+                        ->pluck('id');
+
+                    AdminPasswordHistory::query()
+                        ->where('user_id', $user->id)
+                        ->whereNotIn('id', $idsToKeep)
+                        ->delete();
                 }
 
                 // Insert new password history
@@ -155,6 +183,15 @@ class EditUser extends EditRecord
                 unset($data['password']);
             }
         }
+
+        if (array_key_exists('roles', $data)) {
+            $data['roles'] = array_values(array_map(
+                static fn ($id): string => (string) $id,
+                Arr::wrap($data['roles'] ?? []),
+            ));
+        }
+
+        unset($data['email']);
 
         return $data;
     }

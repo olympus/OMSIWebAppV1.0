@@ -1284,21 +1284,35 @@ class ReportsController extends Controller
         })->store('xls', storage_path('/exports/'));
         // })->export('xls');
 
-        $to_emails = Reportsetting::where('name', 'report_receivedrequests')->value('to_emails');
-        $to_emails = explode(',', $to_emails);
-        for ($i=0; $i < sizeof($to_emails); $i++) {
-            $to_final[]['email'] = $to_emails[$i];
+        $nonProductionRecipient = 'ritik.bansal@lyxelandflamingo.com';
+
+        if (app()->environment('production')) {
+            $to_emails = Reportsetting::where('name', 'report_receivedrequests')->value('to_emails');
+            $cc_emails = Reportsetting::where('name', 'report_receivedrequests')->value('cc_emails');
+
+            $to_final = [];
+            foreach (array_filter(array_map('trim', explode(',', (string) $to_emails))) as $address) {
+                if ($address !== '') {
+                    $to_final[] = ['email' => $address];
+                }
+            }
+
+            $cc_final = [];
+            foreach (array_filter(array_map('trim', explode(',', (string) $cc_emails))) as $address) {
+                if ($address !== '') {
+                    $cc_final[] = ['email' => $address];
+                }
+            }
+        } else {
+            $to_final = [['email' => $nonProductionRecipient]];
+            $cc_final = [];
         }
 
-        $cc_emails = Reportsetting::where('name', 'report_receivedrequests')->value('cc_emails');
-        $cc_emails = explode(',', $cc_emails);
-        $cc_emails[2] = "ritik.bansal@lyxelandflamingo.com";
-        $cc_emails[3] = "komal.sen@olympus.com";
-        for ($i=0; $i < sizeof($cc_emails); $i++) {
-            $cc_final[]['email'] = $cc_emails[$i];
+        $mail = Mail::to($to_final);
+        if ($cc_final !== []) {
+            $mail->cc($cc_final);
         }
-        Mail::to($to_final)->cc($cc_final)
-            ->send(new WeeklyEscalationReport($excelname, $excelpath, $daterange_from, $daterange_to));
+        $mail->send(new WeeklyEscalationReport($excelname, $excelpath, $daterange_from, $daterange_to));
         unlink(storage_path('exports/').$excelpath.'.xls');
 
         echo 'success';

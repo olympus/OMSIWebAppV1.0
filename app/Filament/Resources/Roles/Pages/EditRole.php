@@ -20,7 +20,7 @@ class EditRole extends EditRecord
     protected function getActions(): array
     {
         return [
-            DeleteAction::make(),
+            //DeleteAction::make(),
         ];
     }
 

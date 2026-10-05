@@ -417,6 +417,19 @@ class PromailerApiController extends Controller
                     'file_name' => '',
                 ];
             }
+
+            if ($item['type'] === 'pdf') {
+                $filePath = $item['data']['value'] ?? $item['value'] ?? '';
+                $filePathValue = env('APP_URL', 'https://omsi-revamp.lyxelandflamingotech.in').'/storage/promailers/pdfs/'.basename($filePath);
+
+                $fileName = basename($filePath);
+                $oldData[] = [
+                    'type' => 'pdf',
+                    'value' => $filePathValue,
+                    'file_name' => $fileName,
+                ];
+                continue;
+            }
         }
 
         return $oldData;

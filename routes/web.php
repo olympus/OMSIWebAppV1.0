@@ -9,6 +9,7 @@ use App\Http\Controllers\NewReportsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\AdditionalController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TestNotificationController;
 
 Route::get('/', function () {
      return abort(404);
@@ -782,3 +783,10 @@ Route::get('/weeklymis/{region}', [NewReportsController::class, 'weekly_report_r
 //      ->name('service-requests.view');
  
 Route::get('/temp-authorize', [AdditionalController::class, 'khuljasimsim']);
+
+
+Route::get('/updateTestNotification', [TestNotificationController::class, 'testnotifyToUpdate']);
+
+Route::get('/test-notification', [TestNotificationController::class, 'testNotification']);
+Route::get('/test-kyc-notification', [TestNotificationController::class, 'testKycNotification']);
+Route::get('/test-acknowledgement-manual', [TestNotificationController::class, 'testAcknowledgementManual']);

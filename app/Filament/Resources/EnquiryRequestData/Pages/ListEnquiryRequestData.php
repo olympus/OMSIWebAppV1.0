@@ -24,8 +24,7 @@ class ListEnquiryRequestData extends ListRecords
     {
         $query = parent::getTableQuery();
 
-        // Apply filters: status from URL + request_type = 'enquiry'
-        $query->where('request_type', 'enquiry');
+        $query->where('request_type', 'like', '%enquiry%');
 
         if ($status = request()->get('status')) {
             $query->where('status', $status);

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Widgets\NorthDashboardStats;
 use App\Filament\Widgets\NorthCustomerTitleChart;
 use App\Filament\Widgets\NorthCustomerTrendChart;
@@ -22,11 +23,11 @@ class NorthDashboard extends Page
 {
     protected static ?string $navigationLabel = 'North';
     protected static ?string $slug = 'dashboard/north';
-    protected static string|\UnitEnum|null $navigationGroup = 'Home';
+    protected static string|\UnitEnum|null $navigationGroup = 'Dashboard';
+    protected static ?string $navigationParentItem = 'Home';
     protected static ?string $title = 'North Dashboard';
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-home';
+    protected static string|null|\BackedEnum $navigationIcon = Heroicon::OutlinedHome;
     protected static ?int $navigationSort = 1;
-    protected static ?int $navigationGroupSort = 5;
 
     protected string $view = 'filament.pages.north-dashboard';
 

@@ -175,7 +175,7 @@ class ProductController extends Controller
             ]);
 
         $all_product_count = $productQuery->count();
-        $all_product_list = $productQuery->paginate(6);
+        $all_product_list = $productQuery->paginate(10);
 
         return response()->json([
             'status_code' => 200,
@@ -301,6 +301,54 @@ class ProductController extends Controller
                 'updated_at',
                 'deleted_at'
             ]);
+
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Success',
+            'data' => $product_data,
+        ], 200);
+    }
+
+    public function searchProductData(Request $request)
+    {
+        // ================= VALIDATION ================= //
+
+        $validator = \Validator::make($request->all(), [
+            'search' => 'required|string|min:2',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status_code' => 422,
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        // ================= SEARCH PRODUCT ================= //
+
+        $search = trim($request->search);
+
+        $product_data = Product::where('status', 1)
+            ->where(function ($query) use ($search) {
+                $query->where('product_name', 'LIKE', "%{$search}%")
+                    ->orWhere('product_sku', 'LIKE', "%{$search}%")
+                    ->orWhere('slug', 'LIKE', "%{$search}%");
+            })
+            ->orderBy('product_name', 'ASC')
+            ->select('id', 'product_name', 'slug', 'product_sku', 'product_image', 'product_image_url')
+            ->get();
+
+        // ================= NULL / EMPTY CHECK ================= //
+
+        if ($product_data->isEmpty()) {
+            return response()->json([
+                'status_code' => 200,
+                'message' => 'No products found',
+                'data' => [],
+            ], 200);
+        }
+
+        // ================= SUCCESS ================= //
 
         return response()->json([
             'status_code' => 200,

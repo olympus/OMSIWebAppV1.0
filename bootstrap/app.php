@@ -21,10 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'XSS' => \App\Http\Middleware\XSS::class,
             'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
             'check.jwt' => \App\Http\Middleware\CheckJwtToken::class,
-            'api_v3_auth' => \App\Http\Middleware\APIV3Auth::class,
-
-//            'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
-//            'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
+            'api_v3_auth' => \App\Http\Middleware\APIV3Auth::class, 
+            //'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+            //'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

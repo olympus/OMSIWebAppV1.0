@@ -181,7 +181,7 @@ class RelatedProductSheetExport implements FromCollection, WithHeadings, WithMap
     {
         return [
             $row->product->product_sku ?? '',
-            $row->relatedProduct->product_sku ?? '',
+            $row->product->product_sku ?? '',
             $row->status ? 'active' : 'inactive',
         ];
     }

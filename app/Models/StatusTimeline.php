@@ -17,4 +17,9 @@ class StatusTimeline extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    protected function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->setTimezone('Asia/Kolkata')->format('Y-m-d H:i:s');
+    }
 }

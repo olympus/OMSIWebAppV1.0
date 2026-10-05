@@ -3,60 +3,39 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\NotifyCustomer;
 use App\Customers;
-use App\Promailer;
+use App\Jobs\SendPromailerNotificationJob;
 
 class PromailerNotification extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'promailer:notification';
+    protected $signature = 'promailer:notification {promailer_id}';
+    protected $description = 'Send notification for promailer to all customers (queued)';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Send notification for promailer to all customers';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
-        $promailer = Promailer::where('id', 91)->first();
-
-        if (!$promailer) {
-            \Log::error("Promailer with ID 91 not found");
-            return;
-        }
-
-        Customers::where('is_deleted', 0)
+        $promailerId = $this->argument('promailer_id');
+        $query = Customers::where('is_deleted', 0)
+            ->where('status', 'active')
             ->whereNotNull('device_token')
-            ->chunk(100, function ($customers) use ($promailer) {
-                foreach ($customers as $customer) {
-                    NotifyCustomer::send_notification('promailer_publish', $promailer, $customer); 
-                    \Log::channel('single')->info("Send_Notification to {$customer->id}"); 
-                }
-            });
+            ->where('device_token', '!=', '')
+            ->orderBy('id');
+        $total = $query->count();
+        $bar = $this->output->createProgressBar($total);
+        $bar->start();
 
-            \Log::channel('single')->info("All notifications processed successfully.");
+        $query->chunk(500, function ($customers) use ($promailerId, $bar) {
+            foreach ($customers as $customer) {
+                dispatch(new SendPromailerNotificationJob($promailerId, $customer->id));
+                $bar->advance();
+            }
+        });
+
+        $bar->finish();
+        $this->info("\nAll Promailer notification jobs have been queued!");
     }
-
 }

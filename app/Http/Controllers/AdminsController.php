@@ -611,8 +611,7 @@ class AdminsController extends Controller
     public function submitResetPasswordForm(Request $request){
         $this->validate(request(), [
             'email' => 'required|exists:users',
-            'password' => 'required|string|min:20|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[#?!@$%^&*-]/',
-            'password_confirmation' => 'same:password'
+            'password' => 'required|string|min:20|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[#?!@$%^&*-]/'
 
         ],[
             "email.required"=>"Email is required",

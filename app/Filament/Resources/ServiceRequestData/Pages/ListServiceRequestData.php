@@ -24,8 +24,8 @@ class ListServiceRequestData extends ListRecords
     {
         $query = parent::getTableQuery();
 
-        // Apply filters: status from URL + request_type = 'service'
-        $query->where('request_type', 'service');
+        // Match navigation counts: any request_type containing "service" (case-insensitive in DB)
+        $query->where('request_type', 'like', '%service%');
 
         if ($status = request()->get('status')) {
             $query->where('status', $status);

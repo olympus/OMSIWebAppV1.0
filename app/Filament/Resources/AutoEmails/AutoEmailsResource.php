@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class AutoEmailsResource extends Resource
 {
@@ -24,7 +25,8 @@ class AutoEmailsResource extends Resource
     protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'states';
-    protected static ?int $navigationGroupSort = 2;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Auto Emails';
 
     public static function form(Schema $schema): Schema
     {

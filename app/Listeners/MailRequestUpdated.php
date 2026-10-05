@@ -103,7 +103,7 @@ class MailRequestUpdated
             // Local / Staging → override recipients
             $testEmails = [
                 'ritik.bansal@lyxelandflamingo.com',
-                'sandeep.gupta@lyxellabs.com'
+                'dipesh.singh@lyxelandflamingo.com'
             ];
             Mail::to($testEmails)
                 ->send(new RequestUpdated($servicerequest->id, $oldData_employee_code, $servicerequest, $customer));

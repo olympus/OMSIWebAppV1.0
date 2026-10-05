@@ -90,7 +90,7 @@ class ProductInformationRelationManager extends RelationManager
                     ->acceptedFileTypes(['application/pdf'])   // only PDF
                     ->enableOpen()
                     ->enableDownload()
-                    ->maxSize(2048)
+                    ->maxSize(10000)
                     ->nullable()
                     // remove image → null save
                     ->dehydrateStateUsing(fn ($state) =>

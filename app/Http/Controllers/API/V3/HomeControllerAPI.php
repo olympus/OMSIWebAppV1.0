@@ -128,7 +128,7 @@ class HomeControllerAPI extends Controller
                         'product_image',
                         'product_image_url'
                     ])
-                    ->take(6)->get();
+                    ->take(7)->get();
                  
                 $is_popup_show = $popup_product_list->count() > 0 ? 1 : 0;
 
@@ -146,7 +146,7 @@ class HomeControllerAPI extends Controller
                         'product_image',
                         'product_image_url'
                     ])
-                    ->take(6)->get();
+                    ->take(7)->get();
 
             // 📂 Fetch Trending Videos
                 
@@ -275,7 +275,7 @@ class HomeControllerAPI extends Controller
                         'product_image',
                         'product_image_url'
                     ])
-                    ->take(6)->get();
+                    ->take(7)->get();
                  
                 $is_popup_show = $popup_product_list->count() > 0 ? 1 : 0;
 
@@ -293,7 +293,7 @@ class HomeControllerAPI extends Controller
                         'product_image',
                         'product_image_url'
                     ])
-                    ->take(6)->get();
+                    ->take(7)->get();
 
             // 📂 Fetch Trending Videos
                 

@@ -103,7 +103,7 @@ class MergedServiceRequestsTable
                     ->options([
                         'active' => 'Active',
                         'archive' => 'Archive',
-                    ])->default('active'),
+                    ]),
 
             ])
             ->recordActions([

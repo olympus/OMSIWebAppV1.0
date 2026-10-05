@@ -13,16 +13,22 @@ use App\Models\ProductInfo;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class ProductInfoResource extends Resource
 {
     protected static ?string $model = ProductInfo::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-at-symbol';
 
     protected static ?string $recordTitleAttribute = 'pd_name';
+
+    protected static ?string $navigationLabel = 'Product Info';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Development';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

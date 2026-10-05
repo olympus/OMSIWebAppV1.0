@@ -127,9 +127,6 @@ Update your app to access this feature."
 
                                 // DEVICE TOKEN SECURITY CHECK
                             
-                             
-
-
                                 $isSameEmail = $customer->email === $request->email;
                                 $isSameToken = $customer->device_token === $request->device_token; 
 
@@ -139,44 +136,37 @@ Update your app to access this feature."
                                         $customer->platform = $request->platform;
                                         $customer->save();
                                     }
-                                }
-
-                                /*if ($request->is_mpin == 0) { 
-                                    $customer->is_mpin = 0; 
-                                    $customer->save(); 
-                                }
+                                } 
 
 
-                                if ($request->is_face_id == 0) { 
-                                    $customer->is_face_id = 0; 
-                                    $customer->save(); 
-                                }*/
-
-
+                                $is_changed = 0;
                                 if ($isSameEmail == true  && $isSameToken == false) { 
+                                    $is_changed = 1;
                                     $customer->update([
                                         'is_mpin' => 0,
                                         'is_face_id' => 0,
                                     ]);
                                 }elseif ($isSameEmail == false  && $isSameToken == true) { 
+                                    $is_changed = 1;
                                     $customer->update([
                                         'is_mpin' => 0,
                                         'is_face_id' => 0,
                                     ]);
                                 }elseif ($isSameEmail == false  && $isSameToken == false) { 
+                                    $is_changed = 1;
                                     $customer->update([
                                         'is_mpin' => 0,
                                         'is_face_id' => 0,
                                     ]);
                                 }
                                 
-                              Customers::where('device_token', $request->device_token)
-                                ->where('id', '!=', $customer->id)
-                                ->whereNull('deleted_at')
-                                ->update([
-                                    'is_mpin' => 0,
-                                    'is_face_id' => 0,
-                                ]);
+                                Customers::where('device_token', $request->device_token)
+                                    ->where('id', '!=', $customer->id)
+                                    ->whereNull('deleted_at')
+                                    ->update([
+                                        'is_mpin' => 0,
+                                        'is_face_id' => 0,
+                                    ]);
 
                                 if (isset($request->app_version)) {
                                     if ($request->app_version!=null) {
@@ -200,23 +190,7 @@ Update your app to access this feature."
                                         $hospital->deptAry = $departments;
                                     }
                                     if ($customer->is_verified) {
-                                        $customer->hospitalAry = $hospitals;
-
-                                        // $customer->days = $customer->account_verify_at ? Carbon::parse($customer->account_verify_at)->diffInDays(now()) : 0;
-
-                                        // $customer->is_popup_show = 0;
-                                        // $customer->is_mandatory  = 0;
-
-                                        // if ($customer->days > 0 && $customer->days <= 15) {
-                                        
-                                        //     $customer->is_popup_show = 1;
-                                        //     $customer->is_mandatory  = 0;
-                                        // }
-                                        // elseif($customer->days == 0) {
-                                            
-                                        //     $customer->is_popup_show = 1;
-                                        //     $customer->is_mandatory  = 1;
-                                        // }
+                                        $customer->hospitalAry = $hospitals; 
 
                                         $kycDays = 90;
 
@@ -232,6 +206,7 @@ Update your app to access this feature."
                                         } else {
                                             $customer->days = 0;
                                         }
+                                        
                                         //$customer->days = $days;
                                         $customer->is_popup_show = 0;
                                         $customer->is_mandatory  = 0;
@@ -266,6 +241,7 @@ Update your app to access this feature."
                                         $respArr['token_type'] = 'bearer';
                                         $respArr['expires_in'] = Carbon::now()->addDays(7)->format('Y-m-d H:i:s');
                                         $respArr['app_info'] = $app_info;
+                                        $respArr['is_changed'] = $is_changed;
                                          
                                         if($customer->is_testing){
                                             $respArr['data']->testing_url = \Config('oly.testing_url');
@@ -282,6 +258,7 @@ Update your app to access this feature."
                                         $respArr['status_code'] = 401;
                                         $respArr['message'] = 'Your Account is not verified yet.';
                                         $respArr['app_info'] = $app_info;
+                                        $respArr['is_changed'] = $is_changed;
                                         $respArr['data'] = $customer->makeHidden(['sap_customer_id', 'otp_code', 'mobile_otp', 'email_otp', 'valid_upto', 'is_testing', 'platform', 'app_version', 'created_at',  'updated_at', 'is_expired', 'password_updated_at', 'access_token', 'is_deleted', 'deleted_at', 'old_password', 'is_password_changed']);
                                         $customer_data = Customers::where('email', strtolower($request->email))->first();
                                          
@@ -323,6 +300,7 @@ Update your app to access this feature."
                                         Logger("customer login api password attempt check less than 9"); 
                                         $respArr['status_code'] = 403; 
                                         $respArr['app_info'] = $app_info;
+                                        $respArr['is_changed'] = $is_changed;
                                         $respArr['message'] = 'Invalid credentials!
 Please try again.
 You have '.$left_attempt.' login attempts remaining.';
@@ -332,6 +310,7 @@ You have '.$left_attempt.' login attempts remaining.';
                                         Logger("customer login api password account locked");
                                         $respArr['status_code'] = 403;
                                         $respArr['app_info'] = $app_info;
+                                        $respArr['is_changed'] = $is_changed;
                                         $respArr['message'] = 'Your account has been locked due to multiple failed login attempts. Please try again after 15 minutes.';
                                         return response(json_encode($respArr), 200)->header('Content-Type', 'text/plain');
                                     }
@@ -368,18 +347,21 @@ You have '.$left_attempt.' login attempts remaining.';
                                 }
                             }  
                             
-
+                            $is_changed = 0;
                             if ($isSameEmail == true  && $isSameToken == false) { 
+                                $is_changed = 1;
                                 $customer->update([
                                     'is_mpin' => 0,
                                     'is_face_id' => 0,
                                 ]);
                             }elseif ($isSameEmail == false  && $isSameToken == true) { 
+                                $is_changed = 1;
                                 $customer->update([
                                     'is_mpin' => 0,
                                     'is_face_id' => 0,
                                 ]);
                             }elseif ($isSameEmail == false  && $isSameToken == false) { 
+                                $is_changed = 1;
                                 $customer->update([
                                     'is_mpin' => 0,
                                     'is_face_id' => 0,
@@ -416,22 +398,7 @@ You have '.$left_attempt.' login attempts remaining.';
                                     $hospital->deptAry = $departments;
                                 }
                                 if ($customer->is_verified) {
-                                    $customer->hospitalAry = $hospitals;
-                                    // $customer->days = $customer->account_verify_at ? Carbon::parse($customer->account_verify_at)->diffInDays(now()) : 0;
-
-                                    // $customer->is_popup_show = 0;
-                                    // $customer->is_mandatory  = 0;
-
-                                    // if ($customer->days > 0 && $customer->days <= 15) {
-                                    
-                                    //     $customer->is_popup_show = 1;
-                                    //     $customer->is_mandatory  = 0;
-                                    // }
-                                    // elseif($customer->days == 0) {
-                                        
-                                    //     $customer->is_popup_show = 1;
-                                    //     $customer->is_mandatory  = 1;
-                                    // }
+                                    $customer->hospitalAry = $hospitals; 
 
                                     $kycDays = 90;
 
@@ -479,6 +446,7 @@ You have '.$left_attempt.' login attempts remaining.';
                                     $respArr['status_code'] = 200;
                                     $respArr['message'] = 'Success';
                                     $respArr['app_info'] = $app_info;
+                                    $respArr['is_changed'] = $is_changed;
                                     $respArr['data'] = $customer->makeHidden(['sap_customer_id', 'otp_code', 'mobile_otp', 'email_otp', 'valid_upto', 'is_testing', 'platform', 'app_version', 'created_at',  'updated_at', 'is_expired', 'password_updated_at', 'access_token', 'is_deleted', 'deleted_at', 'old_password', 'is_password_changed']);
                                     $respArr['access_token'] = $access_token;
                                     $respArr['token_type'] = 'bearer';
@@ -500,6 +468,7 @@ You have '.$left_attempt.' login attempts remaining.';
                                     }
                                     $respArr['status_code'] = 401;
                                     $respArr['app_info'] = $app_info;
+                                    $respArr['is_changed'] = $is_changed;
                                     $respArr['message'] = 'Your Account is not verified yet.';
                                     $respArr['data'] = $customer->makeHidden(['sap_customer_id', 'otp_code', 'mobile_otp', 'email_otp', 'valid_upto', 'is_testing', 'platform', 'app_version', 'created_at',  'updated_at', 'is_expired', 'password_updated_at', 'access_token', 'is_deleted', 'deleted_at', 'old_password', 'is_password_changed']);
                                     $customer_data = Customers::where('email', strtolower($request->email))->first();
@@ -547,6 +516,7 @@ You have '.$left_attempt.' login attempts remaining.';
 
                                     $respArr['status_code'] = 403;
                                     $respArr['app_info'] = $app_info;
+                                    $respArr['is_changed'] = $is_changed;
                                     $respArr['message'] = 'Invalid credentials!
 Please try again.
 You have '.$left_attempt.' login attempts remaining.';
@@ -554,6 +524,7 @@ You have '.$left_attempt.' login attempts remaining.';
                                 }else{
                                     $respArr['status_code'] = 403;
                                     $respArr['app_info'] = $app_info;
+                                    $respArr['is_changed'] = $is_changed;
                                     $respArr['message'] = 'Your account has been locked due to multiple failed login attempts. Please try again after 15 minutes.';
                                     return response(json_encode($respArr), 200)->header('Content-Type', 'text/plain');
                                 }

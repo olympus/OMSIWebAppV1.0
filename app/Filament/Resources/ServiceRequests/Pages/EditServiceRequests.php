@@ -101,7 +101,8 @@ class EditServiceRequests extends EditRecord
 
         // --- Add status timeline ---
         StatusTimeline::create([
-            'status' => $record->status,
+            //'status' => $record->status,
+            'status' => $fullData['status'] ?? null,
             'customer_id' => $record->customer_id,
             'request_id' => $record->id,
         ]);

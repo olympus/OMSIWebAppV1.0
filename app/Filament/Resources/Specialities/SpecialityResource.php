@@ -20,14 +20,19 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class SpecialityResource extends Resource
 {
     protected static ?string $model = Speciality::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
     protected static ?string $recordTitleAttribute = 'specialities_name';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Others';
+
+    protected static ?int $navigationSort = 12;
 
     public static function form(Schema $schema): Schema
     {

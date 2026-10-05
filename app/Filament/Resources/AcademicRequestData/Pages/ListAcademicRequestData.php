@@ -24,8 +24,7 @@ class ListAcademicRequestData extends ListRecords
     {
         $query = parent::getTableQuery();
 
-        // Apply filters: status from URL + request_type = 'academic'
-        $query->where('request_type', 'academic');
+        $query->where('request_type', 'like', '%academic%');
 
         if ($status = request()->get('status')) {
             $query->where('status', $status);

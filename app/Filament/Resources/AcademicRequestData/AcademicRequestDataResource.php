@@ -5,87 +5,71 @@ namespace App\Filament\Resources\AcademicRequestData;
 use App\Filament\Resources\AcademicRequestData\Pages\CreateAcademicRequestData;
 use App\Filament\Resources\AcademicRequestData\Pages\EditAcademicRequestData;
 use App\Filament\Resources\AcademicRequestData\Pages\ListAcademicRequestData;
-use App\Filament\Resources\AcademicRequestData\Pages\ViewAcademicRequestData; 
+use App\Filament\Resources\AcademicRequestData\Pages\ViewAcademicRequestData;
 use App\Filament\Resources\AcademicRequestData\Schemas\AcademicRequestDataForm;
-use App\Filament\Resources\AcademicRequestData\Tables\AcademicRequestDataTable;
 use App\Filament\Resources\AcademicRequestData\Schemas\AcademicRequestDataInfolist;
-
-use App\Models\ServiceRequests;
+use App\Filament\Resources\AcademicRequestData\Tables\AcademicRequestDataTable;
 use App\Models\ArchiveServiceRequests;
 use App\Models\CombinedServiceRequests;
+use App\Models\ServiceRequests;
 use BackedEnum;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Filament\Navigation\NavigationItem;
-use Filament\Support\Colors\Color;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Model;
 
 class AcademicRequestDataResource extends Resource
 {
+    private const PORTAL_PERMISSION = 'academic_requests_portal_access';
+
     protected static ?string $model = CombinedServiceRequests::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
 
-    /**
-     * ✅ Dynamic side navigation — counts from BOTH tables.
-     */
+    public static function getAuthorizationResponse(string $action, ?Model $record = null): Response
+    {
+        if (static::shouldSkipAuthorization()) {
+            return Response::allow();
+        }
+
+        $user = auth()->user();
+
+        return $user?->can(self::PORTAL_PERMISSION)
+            ? Response::allow()
+            : Response::deny();
+    }
+
     public static function getNavigationItems(): array
     {
         $statuses = [
             'Received',
-            'Assigned', 
-            'Attended', 
+            'Assigned',
+            'Attended',
             'Closed',
             'All Requests',
         ];
 
         $items = [];
+        $sort = 1;
 
         foreach ($statuses as $status) {
-            if($status == 'Received'){
-                $show_status = "Received";
-                $status = "Received";
-            }elseif($status == 'Assigned'){
-                $show_status = "Assigned";
-                $status = "Assigned";
-            }
-            // elseif($status == 'Re Assigned'){
-            //     $show_status = "Re Assigned";
-            //     $status = "Re-assigned";
-            // }
-            elseif($status == 'Attended'){
-                $show_status = "Attended";
-                $status = "Attended";
-            }
-            // elseif($status == 'Received At Repair Center'){
-            //     $show_status = "Received At Repair Center";
-            //     $status = "Received_At_Repair_Center";
-            // }elseif($status == 'Quotation Prepared'){
-            //     $show_status = "Quotation Prepared";
-            //     $status = "Quotation_Prepared";
-            // }elseif($status == 'PO Received'){
-            //     $show_status = "PO Received";
-            //     $status = "PO_Received";
-            // }elseif($status == 'Repair Started'){
-            //     $show_status = "Repair Started";
-            //     $status = "Repair_Started";
-            // }elseif($status == 'Repair Completed'){
-            //     $show_status = "Repair Completed";
-            //     $status = "Repair_Completed";
-            // }elseif($status == 'Ready To Dispatch'){
-            //     $show_status = "Ready To Dispatch";
-            //     $status = "Ready_To_Dispatch";
-            // }elseif($status == 'Dispatched'){
-            //     $show_status = "Dispatched";
-            //     $status = "Dispatched";
-            // }
-            elseif($status == 'Closed'){
-                $show_status = "Closed";
-                $status = "Closed";
-            }elseif($status == 'All Requests'){
-                $show_status = "All Requests";
-                $status = "";
+            if ($status === 'Received') {
+                $show_status = 'Received';
+                $status = 'Received';
+            } elseif ($status === 'Assigned') {
+                $show_status = 'Assigned';
+                $status = 'Assigned';
+            } elseif ($status === 'Attended') {
+                $show_status = 'Attended';
+                $status = 'Attended';
+            } elseif ($status === 'Closed') {
+                $show_status = 'Closed';
+                $status = 'Closed';
+            } elseif ($status === 'All Requests') {
+                $show_status = 'All Requests';
+                $status = '';
             }
 
             $activeCount = ServiceRequests::where('request_type', 'like', '%academic%')
@@ -93,19 +77,19 @@ class AcademicRequestDataResource extends Resource
                     $q->where('status', $status);
                 })->count();
 
-            //where('status', $status)->count();
             $archiveCount = ArchiveServiceRequests::where('request_type', 'like', '%academic%')
                 ->when($status, function ($q) use ($status) {
                     $q->where('status', $status);
                 })->count();
-                //where('status', $status)->count();
+
             $totalCount = $activeCount + $archiveCount;
 
             $items[] = NavigationItem::make("{$show_status} ({$totalCount})")
                 ->icon('heroicon-o-clipboard-document-list')
                 ->group('Academic Requests')
-                ->url(static::getUrl('index', ['status' => $status]))
-                ->badge($totalCount ?: null);
+                ->sort($sort++)
+                ->url(static::getUrl('index', array_filter(['status' => $status])))
+                ->badge($totalCount > 0 ? (string) $totalCount : null);
         }
 
         return $items;
@@ -120,7 +104,6 @@ class AcademicRequestDataResource extends Resource
     {
         return AcademicRequestDataTable::configure($table);
     }
-
 
     public static function infolist(Schema $schema): Schema
     {

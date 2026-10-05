@@ -8,6 +8,7 @@ use App\Models\Customers;
 use App\DownloadExcelMail;
 use App\Mail\ArchiveRequestDataMail;
 use App\Mail\ArchiveCustomerDataMail;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -21,12 +22,13 @@ use Maatwebsite\Excel\Facades\Excel;
 class ArchiveDataFilter extends Page implements Forms\Contracts\HasForms, HasActions
 {
     use Forms\Concerns\InteractsWithForms;
+    use HasPageShield;
     use InteractsWithActions;
     protected static ?string $title = 'Archive Data Filter';
     protected static ?string $navigationLabel = 'Archive Requests';
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-funnel';
-    protected static ?int $navigationSort = 4;
-    protected static ?int $navigationGroupSort = 5;
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-archive-box';
+    protected static ?int $navigationSort = 5;
+    protected static string|\UnitEnum|null $navigationGroup = 'Requests';
 
     protected string $view = 'filament.pages.archive-data-filter';
 

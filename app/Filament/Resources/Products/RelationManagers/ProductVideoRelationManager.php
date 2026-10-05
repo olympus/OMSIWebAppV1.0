@@ -130,7 +130,7 @@ class ProductVideoRelationManager extends RelationManager
                 ->visibility('public')
                 ->directory('product_video/' . date('FY'))
                 ->acceptedFileTypes(['video/mp4'])
-                ->maxSize(10240) // 10MB
+                ->maxSize(21000) // 10MB
                 ->visible(fn ($get) => $get('video_type') === 'other_video')
                 ->required(fn ($get) => $get('video_type') === 'other_video' && blank($get('video_url')))
                 ->live()
@@ -215,7 +215,7 @@ class ProductVideoRelationManager extends RelationManager
                 ->visibility('public')
                 ->directory('product_video/' . date('FY'))
                 ->acceptedFileTypes(['video/mp4'])
-                ->maxSize(10240) // 10MB
+                ->maxSize(21000) // 10MB
                 ->visible(fn ($get) => $get('video_type') === 'other_video')
                 ->required(fn ($get) => $get('video_type') === 'other_video' && blank($get('video_url')))
                 ->live()

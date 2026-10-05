@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', 'ses'),
 
     /*
     |--------------------------------------------------------------------------
@@ -50,7 +50,7 @@ return [
         ],
 
         'ses' => [
-            'transport' => 'ses',
+            'transport' => 'ses', 
         ],
 
         'postmark' => [

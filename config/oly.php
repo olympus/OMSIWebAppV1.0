@@ -111,10 +111,11 @@ return [
         
         'developer_email' => 'sarvar.kumar@lyxelandflamingo.com',
         'enq_acad_coordinator_email' => [
-            'lalita.sharma@olympus.com',
+            //'lalita.sharma@olympus.com',
             //'sonali.yadav@olympus.com',
         ],
-        'service_coordinator_email' => 'komal.sen@olympus.com',
+        //'service_coordinator_email' => 'komal.sen@olympus.com',
+        'service_coordinator_email' => 'ritik.bansal@lyxelandflamingo.com',
         //'service_admin' => 'vinod.madan@olympus.com',
         'olympus_admin' => 'ryo_nakadegawa@ot.olympus.co.jp',
 
@@ -122,32 +123,44 @@ return [
         //'service_level_3_esc' => 'saurabh.shankar@olympus.com',
         
         'service_level_3_esc' => [
-            'komal.sen@olympus.com',
-            'sangeeta.gupta@olympus.com',
+            //'komal.sen@olympus.com',
+            //'sangeeta.gupta@olympus.com',
             //'ryo.nakadegawa@olympus.com',
-            'saurabh.shankar@olympus.com',
+            //'saurabh.shankar@olympus.com',
         ],
-        'service_level_4_esc' => 'manish.kumar@olympus.com',
-        'enq_acad_level_3_esc' => 'umesh.shankar@olympus.com,indroneil.mukerjee@olympus.com,anurag.rastogi@olympus.com',
+        //'service_level_4_esc' => 'manish.kumar@olympus.com',
+        'service_level_4_esc' => 'ritik.bansal@lyxelandflamingo.com',
+        'enq_acad_level_3_esc' => 'ritik.bansal@lyxelandflamingo.com',
+        //'enq_acad_level_3_esc' => 'umesh.shankar@olympus.com,indroneil.mukerjee@olympus.com,anurag.rastogi@olympus.com',
 
-        'workshopmanagers_east' => 'biswanath.saha@olympus.com',
-        'workshopmanagers_west' => 'vikas.mahajan@olympus.com',
-        'workshopmanagers_south' => 'ganapathy.subramaniyam@olympus.com',
-        'workshopmanagers_north' => 'rahul.khatri@olympus.com',
+        //'workshopmanagers_east' => 'biswanath.saha@olympus.com',
+        //'workshopmanagers_west' => 'vikas.mahajan@olympus.com',
+        //'workshopmanagers_south' => 'ganapathy.subramaniyam@olympus.com',
+        //'workshopmanagers_north' => 'rahul.khatri@olympus.com',
 
         'feedback_cc' => [
+            'ritik.bansal@lyxelandflamingo.com',
 //            'radhika.rawat@olympus.com', 
-            'saurabh.shankar@olympus.com',
+            //'saurabh.shankar@olympus.com',
         ],
 
         'escalation_cc' => [
-            'radhika.rawat@olympus.com',
-            'vinod.madan@olympus.com',
+            'ritik.bansal@lyxelandflamingo.com'
+            // 'radhika.rawat@olympus.com',
+            // 'vinod.madan@olympus.com',
         ],
         
         'current_version_iOS' => '1.24',
         //'current_version_iOS' => '1.19',
-        'current_version_android' => '1.1.41',
+        'current_version_android' => '1.3.0',
         //'current_version_android' => '1.0.28',
         'testing_url' => 'https://olympusmyvoice.ml',
+
+        'roi_calculator' => [
+            'marketing_spoc' => 'ritik.bansal@lyxelandflamingo.com',
+            //'marketing_spoc' => 'nishant.sinha@olympus.com',
+            //'sales_marketing_head' => 'anurag.rastogi@olympus.com',
+            'local_level_sales' => 'Customerleads@olympus.com',
+            'sales_marketing_head' => 'ritik.bansal@lyxelandflamingo.com',
+        ],
     ];

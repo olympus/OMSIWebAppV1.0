@@ -15,15 +15,33 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class FeedbackResource extends Resource
 {
     protected static ?string $model = Feedback::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
     protected static ?string $recordTitleAttribute = 'request_id';
 
+    protected static ?string $navigationLabel = 'Customer Feedback';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Feedback';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Feedback::query()->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
+    }
     public static function form(Schema $schema): Schema
     {
         return FeedbackForm::configure($schema);

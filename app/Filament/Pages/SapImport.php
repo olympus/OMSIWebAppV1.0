@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\SapController;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Exception;
 
 class SapImport extends Page
 {
+    use HasPageShield;
     use WithFileUploads;
 
     public $attachment;
@@ -40,9 +42,9 @@ class SapImport extends Page
     protected static ?string $navigationLabel = 'SAP Import';
     protected static ?string $slug = 'sap-import';
     protected static ?string $title = 'SAP Import';
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-arrow-down-tray';
-    protected static ?int $navigationSort = 2;
-    protected static ?int $navigationGroupSort = 5;
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-at-symbol';
+    protected static ?int $navigationSort = 3;
+    protected static string|\UnitEnum|null $navigationGroup = 'Others';
     protected string $view = 'filament.pages.sap-import';
 
     public function submit()

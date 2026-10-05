@@ -17,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class SubCategoryResource extends Resource
 {
@@ -25,6 +26,10 @@ class SubCategoryResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'sub_categories_name';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Others';
+
+    protected static ?int $navigationSort = 11;
 
     public static function form(Schema $schema): Schema
     {

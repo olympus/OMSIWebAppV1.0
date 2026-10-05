@@ -33,7 +33,7 @@ class SendKycNotificationJob implements ShouldQueue
             return;
         }
 
-        $customer = Customers::find($this->customerId); 
+        $customer = Customers::find($this->customerId);
         if (!$customer) {
             return;
         }
@@ -61,6 +61,7 @@ class SendKycNotificationJob implements ShouldQueue
                     $message = "Last day to update your KYC. Complete it today to avoid deactivation.";
                     break;
                 default:
+                    $title = "KYC Reminder:";
                     $message = "KYC Reminder";
             }
         }
@@ -68,6 +69,7 @@ class SendKycNotificationJob implements ShouldQueue
         // Your existing notification method
         NotifyCustomer::sendCustomerNotification(
             'kyc_reminder',
+            $title,
             $message,
             $customer
         );

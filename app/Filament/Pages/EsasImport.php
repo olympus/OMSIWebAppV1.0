@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\EsasController;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Excel;
 use Exception;
 
 class EsasImport extends Page
 {
+    use HasPageShield;
     use WithFileUploads;
 
     public $attachment;
@@ -24,9 +26,9 @@ class EsasImport extends Page
     protected static ?string $navigationLabel = 'ESAS Import';
     protected static ?string $slug = 'esas-import';
     protected static ?string $title = 'ESAS Import';
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-arrow-down-tray';
-    protected static ?int $navigationSort = 3;
-    protected static ?int $navigationGroupSort = 5;
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+    protected static ?int $navigationSort = 4;
+    protected static string|\UnitEnum|null $navigationGroup = 'Others';
     protected string $view = 'filament.pages.esas-import';
 
     public function submit()

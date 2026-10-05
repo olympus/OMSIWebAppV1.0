@@ -21,7 +21,7 @@ return [
             'pages' => true,
             'widgets' => true,
             'resources' => true,
-            'custom_permissions' => false,
+            'custom_permissions' => true,
         ],
     ],
 
@@ -172,7 +172,10 @@ return [
             ],
         ],
         'exclude' => [
-            //
+            // Same model as ServiceRequestDataResource (Shield would triple "Combined Service Requests").
+            // Access is governed by custom_permissions + resource authorization overrides instead.
+            \App\Filament\Resources\EnquiryRequestData\EnquiryRequestDataResource::class,
+            \App\Filament\Resources\AcademicRequestData\AcademicRequestDataResource::class,
         ],
     ],
 
@@ -226,7 +229,10 @@ return [
     |
     */
 
-    'custom_permissions' => [],
+    'custom_permissions' => [
+        'enquiry_requests_portal_access' => 'Enquiry requests (sidebar & all enquiry actions)',
+        'academic_requests_portal_access' => 'Academic requests (sidebar & all academic actions)',
+    ],
 
     /*
     |--------------------------------------------------------------------------
