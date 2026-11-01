@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('employee_team', function (Blueprint $table) {
-            $table->string('reporting_manager')->nullable()->after('escalation_4');  
+            //$table->string('reporting_manager')->nullable()->after('escalation_4');  
         });
     }
 

@@ -386,8 +386,11 @@ class ServiceRequestController extends Controller
                 // Mail::to($users_final)->cc($cc_final)
                 // ->send(new RequestCreated($pathToImage, $servicerequest, $customer, $assign_request));
 
-                if(env('APP_ENV') != "staging"){
+                if(env('APP_ENV') == "production"){
                     Mail::to($users_final)->cc($cc_final)
+                    ->send(new RequestCreated($service->id, $servicerequest, $customer, $assign_request));
+                }else{
+                    Mail::to('ritik.bansal@lyxelandflamingo.com')
                     ->send(new RequestCreated($service->id, $servicerequest, $customer, $assign_request));
                 }
                 // // Mail::to($users_final)->cc($cc_final)
@@ -1201,8 +1204,11 @@ Update now!."
                         //code comment on 13 dec
                         //$final_to_list = 'sandeep.gupta@lyxellabs.com';
                         //$final_cc_list = 'sandeep.gupta@lyxellabs.com';
-                        if(env('APP_ENV') != "staging"){
+                        if(env('APP_ENV') == "production"){
                             Mail::to($final_to_list)->cc($final_cc_list)
+                            ->send(new RequestEscalated($request->request_id, $servicerequest, $customer));
+                        }else{
+                            Mail::to('ritik.bansal@lyxelandflamingo.com')
                             ->send(new RequestEscalated($request->request_id, $servicerequest, $customer));
                         }
 
@@ -1354,8 +1360,11 @@ Update now!."
 
             // Mail::to($final_to_list)->cc($final_cc_list)
             // ->send(new RequestEscalated($pathToImage, $servicerequest, $customer));
-            if(env('APP_ENV') != "staging"){
+            if(env('APP_ENV') == "production"){
                 Mail::to($final_to_list)->cc($final_cc_list)
+                        ->send(new RequestEscalated($request->request_id, $servicerequest, $customer));
+            }else{
+                Mail::to('ritik.bansal@lyxelandflamingo.com')
                         ->send(new RequestEscalated($request->request_id, $servicerequest, $customer));
             }
             return response(json_encode($respArr), 200)->header('Content-Type', 'text/plain');
@@ -1505,8 +1514,11 @@ Update now!."
 
                         // Mail::to($users_final)->cc($cc_final)
                         // ->send(new FeedbackCreated($pathToImage, $servicerequest, $customer));
-                        if(env('APP_ENV') != "staging"){
+                        if(env('APP_ENV') == "production"){
                              Mail::to($users_final)->cc($cc_final)
+                            ->send(new FeedbackCreated($servicerequest->id, $servicerequest, $customer));
+                        }else{
+                            Mail::to('ritik.bansal@lyxelandflamingo.com')
                             ->send(new FeedbackCreated($servicerequest->id, $servicerequest, $customer));
                         }
                     }

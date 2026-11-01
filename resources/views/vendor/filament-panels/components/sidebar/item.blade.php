@@ -9,6 +9,7 @@
     'first' => false,
     'grouped' => false,
     'icon' => null,
+    'label' => null,
     'last' => false,
     'shouldOpenUrlInNewTab' => false,
     'sidebarCollapsible' => true,
@@ -18,8 +19,12 @@
 ])
 
 @php
+    use Illuminate\Contracts\Support\Htmlable;
+
     $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
     $hasCollapsibleChildren = is_countable($childItems) && count($childItems) > 0;
+    $labelContent = $label ?? $slot;
+    $labelHtml = ($labelContent instanceof Htmlable) ? $labelContent->toHtml() : (string) $labelContent;
 @endphp
 
 <li
@@ -57,7 +62,7 @@
                         tooltip = $store.sidebar.isOpen
                             ? false
                             : {
-                                  content: @js($slot->toHtml()),
+                                  content: @js($labelHtml),
                                   placement: document.dir === 'rtl' ? 'left' : 'right',
                                   theme: $store.theme,
                               }
@@ -112,7 +117,7 @@
                         'fi-sidebar-item-parent-label text-sm font-medium text-gray-600 dark:text-gray-400' => $hasCollapsibleChildren && (! $subGrouped),
                     ])
                 >
-                    {{ $slot }}
+                    {{ $labelContent }}
                 </span>
 
                 @if (filled($badge))
@@ -165,7 +170,7 @@
                     tooltip = $store.sidebar.isOpen
                         ? false
                         : {
-                              content: @js($slot->toHtml()),
+                              content: @js($labelHtml),
                               placement: document.dir === 'rtl' ? 'left' : 'right',
                               theme: $store.theme,
                           }
@@ -214,7 +219,7 @@
                 @endif
                 class="fi-sidebar-item-label"
             >
-                {{ $slot }}
+                {{ $labelContent }}
             </span>
 
             @if (filled($badge))

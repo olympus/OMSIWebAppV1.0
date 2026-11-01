@@ -6,16 +6,17 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
-        "aws/aws-sdk-php": "3.399",
+        "php": "^8.3",
+        "aws/aws-sdk-php": "3.368",
         "bezhansalleh/filament-shield": "^4.0",
-        "filament/filament": "^4.14", 
-        "google/apiclient": "^2.20",
+        "filament/filament": "^4.12",
+        "google/apiclient": "2.16",
+        "google/apiclient-services": "v0.418.0",
         "guzzlehttp/promises": "^2.3",
         "jenssegers/agent": "^2.6",
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^13.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.10.1",
+        "laravel/tinker": "^3.0",
         "maatwebsite/excel": "^3.1",
         "pxlrbt/filament-activity-log": "^2.1",
         "santigarcor/laratrust": "^8.5",
@@ -29,7 +30,7 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "phpunit/phpunit": "^12.5"
     },
     "autoload": {
         "psr-4": {

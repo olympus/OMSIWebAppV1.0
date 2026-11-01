@@ -5,9 +5,11 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
 use App\Http\Responses\LoginResponse;
+use App\View\Compilers\BladeCompiler;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\View\DynamicComponent;
 use Spatie\Activitylog\Models\Activity; // ✅ THIS LINE IS MISSING (IMPORTANT)
 use Illuminate\Support\Str;
 class AppServiceProvider extends ServiceProvider
@@ -18,6 +20,19 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
+
+        $this->app->singleton('blade.compiler', function ($app) {
+            return tap(new BladeCompiler(
+                $app['files'],
+                $app['config']['view.compiled'],
+                $app['config']->get('view.relative_hash', false) ? $app->basePath() : '',
+                $app['config']->get('view.cache', true),
+                $app['config']->get('view.compiled_extension', 'php'),
+                $app['config']->get('view.check_cache_timestamps', true),
+            ), function ($blade) {
+                $blade->component('dynamic-component', DynamicComponent::class);
+            });
+        });
     }
 
     /**

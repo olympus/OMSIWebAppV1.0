@@ -105,4 +105,16 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-cache-'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Serializable Classes
+    |--------------------------------------------------------------------------
+    |
+    | Laravel 13 can block unserializing PHP objects from cache. This app
+    | stores chart and report objects in cache, so all classes stay allowed.
+    |
+    */
+
+    'serializable_classes' => true,
+
 ];

@@ -1769,8 +1769,8 @@ You have '.$left_attempt.' attempts remaining';
                 send_sms('request_created', $customer_otp_send, "", "");
 
 
-                //return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => $customer_otp_send->otp_code ]);
-                return Response::json(['status_code'=>200,'message'=>'OTP Sent !']);
+                return Response::json(['status_code'=>200,'message'=>'OTP Sent !','otp' => "" ]);
+                //return Response::json(['status_code'=>200,'message'=>'OTP Sent !']);
 
             } else {
                 return Response::json(['status_code'=>403,'message'=>'Incorrect Mobile Number !']);

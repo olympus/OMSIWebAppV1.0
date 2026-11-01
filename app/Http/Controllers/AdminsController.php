@@ -89,7 +89,7 @@ class AdminsController extends Controller
             {
                 foreach ($posts as $user) {
                     $roles = \App\RoleUser::where('user_id', $user->id)->pluck("role_id")->toArray();
-                    $role_list = \App\Role::whereIn('id', $roles)->pluck("display_name")->toArray();
+                    $role_list = \App\Role::whereIn('id', $roles)->pluck("name")->toArray();
                     $user->roles = implode(', ', $role_list);
 
 
@@ -283,7 +283,7 @@ class AdminsController extends Controller
         $user = User::findOrFail($id);
         $roles = Role::get();
         $role_list = RoleUser::where('user_id', $id)->pluck("role_id")->toArray();
-        $user_roles = Role::whereIn('id', $role_list)->select("display_name","id")->get()->toArray();
+        $user_roles = Role::whereIn('id', $role_list)->select("name","id")->get()->toArray();
         // dd($user_roles);
         return view('admins.edit', ['user'=>$user,'roles'=>$roles, 'user_roles'=>$user_roles]);
     }

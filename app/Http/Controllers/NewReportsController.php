@@ -99,29 +99,31 @@ class NewReportsController extends Controller
         $to_final = [];
         $cc_final = [];
 
-        if (App::environment('local')) {
+        if (App::environment('production')) {
 
-            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
-
-        } else {
-
-            // Production environment — use actual report settings
             $to_emails = Reportsetting::where('name', 'report_pendingrequests')->value('to_emails');
-            $to_emails = explode(',', $to_emails);
+            $to_emails = explode(',', (string) $to_emails);
 
             foreach ($to_emails as $email) {
-                $to_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $to_final[]['email'] = $email;
+                }
             }
 
             $cc_emails = Reportsetting::where('name', 'report_pendingrequests')->value('cc_emails');
-            $cc_emails = explode(',', $cc_emails);
+            $cc_emails = explode(',', (string) $cc_emails);
 
-            // Add Ritik's email to CC in production
             $cc_emails[] = "ritik.bansal@lyxelandflamingo.com";
 
             foreach ($cc_emails as $email) {
-                $cc_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $cc_final[]['email'] = $email;
+                }
             }
+        } else {
+            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
         }
         Mail::to($to_final)->cc($cc_final ?? [])->send(new DailyReceivedRequests($excelname, $excelpath, $date_today));
 
@@ -225,29 +227,31 @@ class NewReportsController extends Controller
         $to_final = [];
         $cc_final = [];
 
-        if (App::environment('local')) {
+        if (App::environment('production')) {
 
-            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
-
-        } else {
-
-            // Production environment — use actual report settings
             $to_emails = Reportsetting::where('name', 'report_pendingrequests')->value('to_emails');
-            $to_emails = explode(',', $to_emails);
+            $to_emails = explode(',', (string) $to_emails);
 
             foreach ($to_emails as $email) {
-                $to_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $to_final[]['email'] = $email;
+                }
             }
 
             $cc_emails = Reportsetting::where('name', 'report_pendingrequests')->value('cc_emails');
-            $cc_emails = explode(',', $cc_emails);
+            $cc_emails = explode(',', (string) $cc_emails);
 
-            // Add Ritik's email to CC in production
             $cc_emails[] = "ritik.bansal@lyxelandflamingo.com";
 
             foreach ($cc_emails as $email) {
-                $cc_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $cc_final[]['email'] = $email;
+                }
             }
+        } else {
+            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
         }
         Mail::to($to_final)->cc($cc_final ?? [])->send(new DailyPendingWeekLate($excelname, $excelpath, $date_today));
 
@@ -371,29 +375,31 @@ class NewReportsController extends Controller
         $to_final = [];
         $cc_final = [];
 
-        if (App::environment('local')) {
+        if (App::environment('production')) {
 
-            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
-
-        } else {
-
-            // Production environment — use actual report settings
             $to_emails = Reportsetting::where('name', 'autoemail_'.$regionname)->value('to_emails');
-            $to_emails = explode(',', $to_emails);
+            $to_emails = explode(',', (string) $to_emails);
 
             foreach ($to_emails as $email) {
-                $to_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $to_final[]['email'] = $email;
+                }
             }
 
             $cc_emails = Reportsetting::where('name', 'autoemail_'.$regionname)->value('cc_emails');
-            $cc_emails = explode(',', $cc_emails);
+            $cc_emails = explode(',', (string) $cc_emails);
 
-            // Add Ritik's email to CC in production
             $cc_emails[] = "ritik.bansal@lyxelandflamingo.com";
 
             foreach ($cc_emails as $email) {
-                $cc_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $cc_final[]['email'] = $email;
+                }
             }
+        } else {
+            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
         }
 
         Mail::to($to_final)->cc($cc_final)->send(new MonthlyCustomerList($regionname, $excelname, $excelpath, $daterange_to));
@@ -514,29 +520,31 @@ class NewReportsController extends Controller
         $to_final = [];
         $cc_final = [];
 
-        if (App::environment('local')) {
+        if (App::environment('production')) {
 
-            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
-
-        } else {
-
-            // Production environment — use actual report settings
             $to_emails = Reportsetting::where('name', 'autoemail_'.$regionname)->value('to_emails');
-            $to_emails = explode(',', $to_emails);
+            $to_emails = explode(',', (string) $to_emails);
 
             foreach ($to_emails as $email) {
-                $to_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $to_final[]['email'] = $email;
+                }
             }
 
             $cc_emails = Reportsetting::where('name', 'autoemail_'.$regionname)->value('cc_emails');
-            $cc_emails = explode(',', $cc_emails);
+            $cc_emails = explode(',', (string) $cc_emails);
 
-            // Add Ritik's email to CC in production
             $cc_emails[] = "ritik.bansal@lyxelandflamingo.com";
 
             foreach ($cc_emails as $email) {
-                $cc_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $cc_final[]['email'] = $email;
+                }
             }
+        } else {
+            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
         }
 
         Mail::to($to_final)->cc($cc_final)->send(new MonthlyFeedBackReport($regionname, $excelname, $excelpath, $daterange_from, $daterange_to));
@@ -791,29 +799,31 @@ class NewReportsController extends Controller
         $to_final = [];
         $cc_final = [];
 
-        if (App::environment('local')) {
+        if (App::environment('production')) {
 
-            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
-
-        } else {
-
-            // Production environment — use actual report settings
             $to_emails = Reportsetting::where('name', 'autoemail_'.$regionname)->value('to_emails');
-            $to_emails = explode(',', $to_emails);
+            $to_emails = explode(',', (string) $to_emails);
 
             foreach ($to_emails as $email) {
-                $to_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $to_final[]['email'] = $email;
+                }
             }
 
             $cc_emails = Reportsetting::where('name', 'autoemail_'.$regionname)->value('cc_emails');
-            $cc_emails = explode(',', $cc_emails);
+            $cc_emails = explode(',', (string) $cc_emails);
 
-            // Add Ritik's email to CC in production
             $cc_emails[] = "ritik.bansal@lyxelandflamingo.com";
 
             foreach ($cc_emails as $email) {
-                $cc_final[]['email'] = trim($email);
+                $email = trim($email);
+                if ($email !== '') {
+                    $cc_final[]['email'] = $email;
+                }
             }
+        } else {
+            $to_final[]['email'] = 'ritik.bansal@lyxelandflamingo.com';
         }
 
         Mail::to($to_final)->cc($cc_final)->send(new WeeklyMis($regionname, $excelname, $excelpath, $daterange_from, $daterange_to));

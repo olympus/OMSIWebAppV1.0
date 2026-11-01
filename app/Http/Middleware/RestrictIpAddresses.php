@@ -27,6 +27,11 @@ class RestrictIpAddresses
             return $next($request);
         }
 
+        // Local XAMPP / artisan serve — office IP allowlist does not include loopback
+        if (in_array($request->ip(), ['127.0.0.1', '::1'], true)) {
+            return $next($request);
+        }
+
 
         $agent = new Agent();
         if(in_array($request->ip(), [

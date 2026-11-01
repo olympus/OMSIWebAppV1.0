@@ -12,11 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('videos', function (Blueprint $table) {
-            $table->integer('order_by')->default(0)->index()->after('enabled'); // sorting fast
+            if (! Schema::hasColumn('videos', 'order_by')) {
+                $table->integer('order_by')->default(0)->after('enabled');
+            }
+        });
 
-
-            // Composite index (very useful for frontend listing)
-            $table->index(['order_by']);
+        Schema::table('videos', function (Blueprint $table) {
+            if (! Schema::hasIndex('videos', 'videos_order_by_index')) {
+                $table->index('order_by', 'videos_order_by_index');
+            }
         });
     }
 
@@ -26,7 +30,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('videos', function (Blueprint $table) {
-            //
+            if (Schema::hasIndex('videos', 'videos_order_by_index')) {
+                $table->dropIndex('videos_order_by_index');
+            }
+
+            if (Schema::hasColumn('videos', 'order_by')) {
+                $table->dropColumn('order_by');
+            }
         });
     }
 };

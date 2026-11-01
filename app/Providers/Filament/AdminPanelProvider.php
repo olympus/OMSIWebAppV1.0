@@ -30,11 +30,13 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\HtmlString;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -51,6 +53,36 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->passwordReset()
+            ->renderHook(
+                PanelsRenderHook::SCRIPTS_AFTER,
+                fn (): HtmlString => new HtmlString(<<<'HTML'
+                    <script>
+                        if (! window.__omsiSyncPasswordAutofill) {
+                            window.__omsiSyncPasswordAutofill = true
+
+                            const syncPasswordFields = (form) => {
+                                form.querySelectorAll('input[type="password"], input.fi-revealable').forEach((input) => {
+                                    if (! input.value) {
+                                        return
+                                    }
+
+                                    if (input._x_model && input._x_model.get() !== input.value) {
+                                        input._x_model.set(input.value)
+                                    }
+
+                                    input.dispatchEvent(new Event('input', { bubbles: true }))
+                                })
+                            }
+
+                            document.addEventListener('submit', (event) => {
+                                if (event.target instanceof HTMLFormElement) {
+                                    syncPasswordFields(event.target)
+                                }
+                            }, true)
+                        }
+                    </script>
+                HTML),
+            )
             ->homeUrl('/admin/merged-service-requests')
 
             ->databaseNotifications()
@@ -170,7 +202,7 @@ class AdminPanelProvider extends PanelProvider
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
+                PreventRequestForgery::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
